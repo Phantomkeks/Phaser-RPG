@@ -10,7 +10,8 @@ class QuestSockMonster extends BaseScene {
     this.addQuestTitle('QUEST 1: THE SOCK MONSTER', THEME.colors.red);
     this.addSubtitle('Defeat the laundry beast!', 75);
 
-    this.add.image(width * 0.25, height * 0.7,
+    // Spacing tuned so 16x16 sprites at scale 4 (64px wide) don't overlap.
+    this.add.image(width * 0.22, height * 0.7,
       GameState.avatars.bride || 'bride_default').setScale(4);
     this.add.image(width * 0.35, height * 0.7,
       GameState.avatars.groom || 'groom_default').setScale(4);

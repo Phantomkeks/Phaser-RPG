@@ -25,10 +25,12 @@ class OverworldScene extends BaseScene {
     this.questNodes.forEach(q => this.makeQuestNode(q));
 
     // Bride is the only physics-controlled character; groom follows visually.
-    this.bride = this.physics.add.image(width / 2 - 20, height - 80,
+    // Spacing tuned so 16x16 sprites at scale 3 (48px wide) don't overlap.
+    this.partyOffsetX = 50;
+    this.bride = this.physics.add.image(width / 2 - this.partyOffsetX / 2, height - 80,
       GameState.avatars.bride || 'bride_default').setScale(3);
     this.bride.body.setCollideWorldBounds(true);
-    this.groom = this.add.image(width / 2 + 20, height - 80,
+    this.groom = this.add.image(width / 2 + this.partyOffsetX / 2, height - 80,
       GameState.avatars.groom || 'groom_default').setScale(3);
 
     this.cursors = this.input.keyboard.createCursorKeys();
@@ -122,7 +124,7 @@ class OverworldScene extends BaseScene {
     if (this.cursors.down.isDown)  v.y =  speed;
 
     this.bride.setVelocity(v.x, v.y);
-    this.groom.x = this.bride.x + 24;
+    this.groom.x = this.bride.x + this.partyOffsetX;
     this.groom.y = this.bride.y;
 
     if (this.questCooldown > 0) return;

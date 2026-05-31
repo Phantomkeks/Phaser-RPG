@@ -67,7 +67,9 @@ class AvatarScene extends BaseScene {
   pixelateAndApply(dataUrl, role, sprite) {
     const img = new Image();
     img.onload = () => {
-      const TARGET = 32;
+      // Match the placeholder size (16x16) so photo avatars and defaults
+      // render at the same size everywhere they appear.
+      const TARGET = 16;
       const off = document.createElement('canvas');
       off.width = TARGET;
       off.height = TARGET;
