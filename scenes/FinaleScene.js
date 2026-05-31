@@ -1,4 +1,4 @@
-// FinaleScene — unlocks after all 5 quests; reveals friends' messages
+// FinaleScene — unlocks after all quests; shows the couple's vow + friends' messages
 class FinaleScene extends BaseScene {
   constructor() { super('FinaleScene'); }
 
@@ -20,13 +20,28 @@ class FinaleScene extends BaseScene {
       ...THEME.text.body, color: THEME.colors.gold
     }).setOrigin(0.5);
 
-    this.add.text(width / 2, 115, 'Messages from those who love you:', THEME.text.small)
-      .setOrigin(0.5);
-
     this.add.image(60, 60, GameState.avatars.bride || 'bride_default').setScale(3);
     this.add.image(width - 60, 60, GameState.avatars.groom || 'groom_default').setScale(3);
 
-    this.msgTopStart = 160;
+    // The vow they wrote together — shown above the friends' messages.
+    let messageStartY = 160;
+    if (GameState.vow) {
+      const vowLabel = this.add.text(width / 2, 145, '~ Your Vow ~', {
+        ...THEME.text.body, color: THEME.colors.pink
+      }).setOrigin(0.5);
+      const vowText = this.add.text(width / 2, 170, '"' + GameState.vow + '"', {
+        ...THEME.text.small, color: THEME.colors.gold,
+        align: 'center', wordWrap: { width: width - 100 }, lineSpacing: 4
+      }).setOrigin(0.5, 0);
+      messageStartY = 175 + vowText.height + 25;
+      this.add.text(width / 2, messageStartY - 18,
+        'Messages from those who love you:', THEME.text.small).setOrigin(0.5);
+    } else {
+      this.add.text(width / 2, 115, 'Messages from those who love you:', THEME.text.small)
+        .setOrigin(0.5);
+    }
+
+    this.msgTopStart = messageStartY;
     this.msgY = this.msgTopStart;
     this.msgIndex = 0;
     this.messageTexts = [];

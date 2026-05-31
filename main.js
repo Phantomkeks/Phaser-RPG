@@ -18,6 +18,11 @@ const config = {
     QuestWeddingRing,
     QuestCookTogether,
     QuestPlanTrip,
+    QuestVows,
+    QuestDance,
+    QuestPhotoAlbum,
+    QuestGarden,
+    QuestCake,
     FinaleScene
   ]
 };

@@ -13,12 +13,20 @@ class OverworldScene extends BaseScene {
       stroke: THEME.colors.black, strokeThickness: 3
     }).setOrigin(0.5);
 
+    // 10 quest nodes laid out on a rough 5x2 grid; finale unlocks in the dead center.
     this.questNodes = [
-      { key: 'sockMonster',  scene: 'QuestSockMonster',  x: 150, y: 200, label: 'SOCK\nMONSTER',  color: THEME.colors.red },
-      { key: 'coffeeCups',   scene: 'QuestCoffeeCups',   x: 400, y: 150, label: 'COFFEE\nQUEST',   color: THEME.colors.blue },
-      { key: 'weddingRing',  scene: 'QuestWeddingRing',  x: 650, y: 220, label: 'WEDDING\nRING',   color: THEME.colors.gold },
-      { key: 'cookTogether', scene: 'QuestCookTogether', x: 250, y: 420, label: 'COOK\nTOGETHER', color: THEME.colors.mint },
-      { key: 'planTrip',     scene: 'QuestPlanTrip',     x: 550, y: 420, label: 'PLAN\nA TRIP',   color: THEME.colors.pink }
+      // Top row
+      { key: 'sockMonster',  scene: 'QuestSockMonster',  x: 100, y: 130, label: 'SOCK\nMONSTER',  color: THEME.colors.red },
+      { key: 'coffeeCups',   scene: 'QuestCoffeeCups',   x: 260, y: 110, label: 'COFFEE\nQUEST',   color: THEME.colors.blue },
+      { key: 'weddingRing',  scene: 'QuestWeddingRing',  x: 420, y: 130, label: 'WEDDING\nRING',   color: THEME.colors.gold },
+      { key: 'photoAlbum',   scene: 'QuestPhotoAlbum',   x: 580, y: 110, label: 'PHOTO\nALBUM',    color: THEME.colors.blue },
+      { key: 'vows',         scene: 'QuestVows',         x: 720, y: 130, label: 'WRITE\nVOWS',     color: THEME.colors.gold },
+      // Bottom row
+      { key: 'cookTogether', scene: 'QuestCookTogether', x: 100, y: 420, label: 'COOK\nTOGETHER', color: THEME.colors.mint },
+      { key: 'garden',       scene: 'QuestGarden',       x: 260, y: 440, label: 'GARDEN',         color: THEME.colors.mint },
+      { key: 'dance',        scene: 'QuestDance',        x: 420, y: 420, label: 'DANCE\nTOGETHER', color: THEME.colors.pink },
+      { key: 'cake',         scene: 'QuestCake',         x: 580, y: 440, label: 'RESCUE\nTHE CAKE',color: THEME.colors.pink },
+      { key: 'planTrip',     scene: 'QuestPlanTrip',     x: 720, y: 420, label: 'PLAN\nA TRIP',   color: THEME.colors.pink }
     ];
 
     this.questSprites = [];
