@@ -6,8 +6,10 @@ const config = {
   pixelArt: true,
   backgroundColor: "#1a1a2e",
   scale: {
-    mode: Phaser.Scale.FIT,
+    mode: Phaser.Scale.RESIZE,
     autoCenter: Phaser.Scale.CENTER_BOTH,
+    width: "100%",
+    height: "100%",
   },
   input: {
     activePointers: 3,
