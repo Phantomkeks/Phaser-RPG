@@ -8,7 +8,7 @@ const THEME = {
     red: "#ef476f",
     blue: "#118ab2",
     purple: "#b388eb",
-    green: "#80f76b",
+    green: "#29891e",
     teal: "#48cae4",
     lavender: "#cdb4db",
     lime: "#c1e26d",
