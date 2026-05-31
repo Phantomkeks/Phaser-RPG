@@ -1,6 +1,4 @@
-// Friends' messages — fill in the real ones before the wedding!
 // Each entry: { from: "Name", text: "Message", color: "#hex" (optional) }
-
 const FRIENDS_MESSAGES = [
   {
     from: "Mom & Dad",

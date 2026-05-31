@@ -17,25 +17,24 @@ Once all five are done, the **Finale** scene plays the wedding.
 ## Project structure
 
 ```
-index.html              Entry page; loads Phaser from CDN and the scripts below
-js/
-  main.js               Phaser.Game config and scene list
-  data/
-    gameState.js        Global quest + avatar state
-    messages.js         In-game text
-  scenes/
-    TitleScene.js       Title screen
-    AvatarScene.js      Avatar selection
-    OverworldScene.js   Hub world
-    QuestSockMonster.js
-    QuestCoffeeCups.js
-    QuestWeddingRing.js
-    QuestCookTogether.js
-    QuestPlanTrip.js
-    FinaleScene.js      Wedding finale
+index.html           Entry page; loads Phaser from CDN and the scripts below
+main.js              Phaser.Game config and scene list
+data/
+gameState.js         Global quest + avatar state
+messages.js          In-game text
+scenes/
+TitleScene.js        Title screen
+AvatarScene.js       Avatar selection
+OverworldScene.js    Hub world
+FinaleScene.js       Wedding finale
+QuestSockMonster.js
+QuestCoffeeCups.js
+QuestWeddingRing.js
+QuestCookTogether.js
+QuestPlanTrip.js
 ```
 
-The scenes are listed in `js/main.js` and registered globally via `<script>` tags in `index.html` (no bundler).
+The scenes are listed in `main.js` and registered globally via `<script>` tags in `index.html` (no bundler).
 
 ## Running locally
 
