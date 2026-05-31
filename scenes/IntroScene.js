@@ -11,9 +11,9 @@ class IntroScene extends BaseScene {
     this.pages = [
       "Once upon a pixel, in a kingdom of\nshared coffee mugs and tangled\nheadphones, two heroes met...",
       "They battled lost socks, conquered\nMonday mornings, and survived IKEA\ntogether. Love leveled up.",
-      "Now their greatest quest awaits:\nTHE WEDDING. But the path is long,\nand many side-quests stand in the way.",
+      "Now their greatest quest awaits:\nTHE WEDDING. But the path is long,\nand many side-quests stand in the \nway.",
       "Rescue the cake. Write the vows.\nFind the ring. Plant a garden.\nDance like nobody is watching.",
-      "Complete every quest, and unlock\nthe finale: two hearts, one forever.\n\nPress START to begin your adventure.",
+      "Complete every quest, and unlock\nthe finale: two hearts, one forever.\n\nPress START to begin \nyour adventure.",
     ];
 
     this.pageIndex = 0;
@@ -35,12 +35,14 @@ class IntroScene extends BaseScene {
     box.lineStyle(3, Phaser.Display.Color.HexStringToColor(THEME.colors.gold).color, 1);
     box.strokeRect(boxX, boxY, boxW, boxH);
 
-    this.storyText = this.add.text(width / 2, boxY + boxH / 2, "", {
-      ...THEME.text.body,
-      fontSize: "14px",
-      align: "center",
-      lineSpacing: 8,
-    }).setOrigin(0.5);
+    this.storyText = this.add
+      .text(width / 2, boxY + boxH / 2, "", {
+        ...THEME.text.body,
+        fontSize: "14px",
+        align: "center",
+        lineSpacing: 8,
+      })
+      .setOrigin(0.5);
 
     this.hint = this.add
       .text(width / 2, boxY + boxH + 30 * sy, "[ click / SPACE for next ]", {
@@ -49,13 +51,9 @@ class IntroScene extends BaseScene {
       })
       .setOrigin(0.5);
 
-    this.skipBtn = this.addButton(
-      width - 80 * sx,
-      height - 30 * sy,
-      "SKIP >>",
-      () => this.goNext(),
-      { ...THEME.text.buttonSm }
-    );
+    this.skipBtn = this.addButton(width - 80 * sx, height - 30 * sy, "SKIP >>", () => this.goNext(), {
+      ...THEME.text.buttonSm,
+    });
 
     this.input.on("pointerdown", (_p, targets) => {
       if (targets && targets.includes(this.skipBtn)) return;
