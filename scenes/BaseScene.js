@@ -32,10 +32,11 @@ class BaseScene extends Phaser.Scene {
 
   // True when the device reports any touch capability. Used to gate on-screen controls.
   isTouchDevice() {
-    return (
-      this.sys.game.device.input.touch &&
-      ("ontouchstart" in window || navigator.maxTouchPoints > 0)
-    );
+    const hasTouchEvents = "ontouchstart" in window;
+    const hasMaxTouchPoints = navigator.maxTouchPoints > 0;
+    const coarsePointer = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+    const phaserTouch = this.sys.game.device.input.touch;
+    return phaserTouch || hasTouchEvents || hasMaxTouchPoints || coarsePointer;
   }
 
   // Wires ESC to return to the overworld and adds an on-screen back button on touch devices.
