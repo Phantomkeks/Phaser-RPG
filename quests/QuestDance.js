@@ -11,10 +11,7 @@ class QuestDance extends BaseScene {
     this.enableEscToOverworld();
 
     this.addQuestTitle("QUEST 7: DANCE TOGETHER", THEME.colors.pink);
-    const hint = this.isTouchDevice()
-      ? "Repeat the steps. Tap the arrows below."
-      : "Repeat the steps. Use the arrow keys.";
-    this.addSubtitle(hint, 60);
+    this.addSubtitle("Repeat the steps. Use the arrow keys.", 60);
 
     // Avatars side by side, centered.
     const groundY = height * 0.55;
@@ -52,45 +49,7 @@ class QuestDance extends BaseScene {
       this.handleStep(k);
     });
 
-    if (this.isTouchDevice()) this.addTapArrows();
-
     this.time.delayedCall(800, () => this.startRound());
-  }
-
-  addTapArrows() {
-    const { width, height } = this.scale;
-    const cx = width / 2;
-    const cy = height - 30;
-    const r = 22;
-    const offset = r * 2 + 6;
-    const layout = [
-      { dir: "L", label: "◀", x: cx - offset * 1.5, y: cy },
-      { dir: "U", label: "▲", x: cx - offset * 0.5, y: cy },
-      { dir: "D", label: "▼", x: cx + offset * 0.5, y: cy },
-      { dir: "R", label: "▶", x: cx + offset * 1.5, y: cy },
-    ];
-    layout.forEach((b) => {
-      const g = this.add.graphics();
-      g.fillStyle(0x000000, 0.6);
-      g.fillCircle(0, 0, r);
-      g.lineStyle(2, 0xff6ec7, 0.9);
-      g.strokeCircle(0, 0, r);
-      g.x = b.x;
-      g.y = b.y;
-      g.setDepth(999);
-      this.add
-        .text(b.x, b.y, b.label, { fontFamily: "monospace", fontSize: "18px", color: "#ffffff" })
-        .setOrigin(0.5)
-        .setDepth(1000);
-      const zone = this.add
-        .zone(b.x, b.y, r * 2 + 6, r * 2 + 6)
-        .setDepth(1001)
-        .setInteractive();
-      zone.on("pointerdown", () => {
-        if (!this.acceptingInput) return;
-        this.handleStep(b.dir);
-      });
-    });
   }
 
   keyToDir(key) {

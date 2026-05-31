@@ -69,16 +69,12 @@ class OverworldScene extends BaseScene {
       .setScale(3);
 
     this.cursors = this.input.keyboard.createCursorKeys();
-    this.dpad = this.createVirtualDPad();
 
     // Cooldown to avoid re-triggering a quest the moment we return from it.
     this.questCooldown = 600;
 
-    const hintText = this.isTouchDevice()
-      ? "Walk into a node to start a quest. Use the D-pad to move."
-      : "Walk into a node to start a quest. Arrow keys to move.";
     this.hint = this.add
-      .text(width / 2, height - 30, hintText, {
+      .text(width / 2, height - 30, "Walk into a node to start a quest. Arrow keys to move.", {
         ...THEME.text.tiny,
         fontSize: "9px",
         backgroundColor: THEME.colors.black,
@@ -183,12 +179,6 @@ class OverworldScene extends BaseScene {
     if (this.cursors.right.isDown) v.x = speed;
     if (this.cursors.up.isDown) v.y = -speed;
     if (this.cursors.down.isDown) v.y = speed;
-
-    // Virtual D-pad input (touch). Overrides keyboard only when active.
-    if (this.dpad && (this.dpad.direction.x !== 0 || this.dpad.direction.y !== 0)) {
-      v.x = this.dpad.direction.x * speed;
-      v.y = this.dpad.direction.y * speed;
-    }
 
     this.bride.setVelocity(v.x, v.y);
     this.groom.x = this.bride.x + this.partyOffsetX;

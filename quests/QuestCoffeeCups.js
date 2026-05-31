@@ -53,7 +53,6 @@ class QuestCoffeeCups extends BaseScene {
     });
 
     this.cursors = this.input.keyboard.createCursorKeys();
-    this.dpad = this.createVirtualDPad();
   }
 
   spawnCup() {
@@ -109,10 +108,6 @@ class QuestCoffeeCups extends BaseScene {
     if (this.cursors.right.isDown) this.player.setVelocityX(speed);
     if (this.cursors.up.isDown) this.player.setVelocityY(-speed);
     if (this.cursors.down.isDown) this.player.setVelocityY(speed);
-
-    if (this.dpad && (this.dpad.direction.x !== 0 || this.dpad.direction.y !== 0)) {
-      this.player.setVelocity(this.dpad.direction.x * speed, this.dpad.direction.y * speed);
-    }
   }
 
   makeCupTexture() {

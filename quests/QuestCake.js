@@ -68,10 +68,8 @@ class QuestCake extends BaseScene {
     });
 
     this.cursors = this.input.keyboard.createCursorKeys();
-    this.dpad = this.createVirtualDPad();
 
-    const hint = this.isTouchDevice() ? "Use the D-pad to run!" : "Use ◀ ▶ to run!";
-    this.statusText = this.add.text(width / 2, height - 30, hint, { ...THEME.text.tiny }).setOrigin(0.5);
+    this.statusText = this.add.text(width / 2, height - 30, "Use ◀ ▶ to run!", { ...THEME.text.tiny }).setOrigin(0.5);
   }
 
   dropLayer() {
@@ -140,9 +138,6 @@ class QuestCake extends BaseScene {
     this.player.setVelocityX(0);
     if (this.cursors.left.isDown) this.player.setVelocityX(-speed);
     if (this.cursors.right.isDown) this.player.setVelocityX(speed);
-    if (this.dpad && this.dpad.direction.x !== 0) {
-      this.player.setVelocityX(this.dpad.direction.x * speed);
-    }
 
     this.layers.children.iterate((l) => {
       if (l && l.y > this.scale.height + 20) l.destroy();
