@@ -28,7 +28,7 @@ class QuestDance extends BaseScene {
       ...THEME.text.body, color: THEME.colors.white
     }).setOrigin(0.5);
 
-    this.rounds = [3, 5, 7];
+    this.rounds = [3, 4, 5];
     this.roundIndex = 0;
     this.acceptingInput = false;
     this.expected = [];
@@ -42,7 +42,7 @@ class QuestDance extends BaseScene {
       this.handleStep(k);
     });
 
-    this.time.delayedCall(700, () => this.startRound());
+    this.time.delayedCall(800, () => this.startRound());
   }
 
   keyToDir(key) {
@@ -70,7 +70,7 @@ class QuestDance extends BaseScene {
     this.acceptingInput = false;
     this.arrowRow.setText('');
     let i = 0;
-    const speed = Math.max(280, 600 - this.roundIndex * 120);
+    const speed = Math.max(380, 700 - this.roundIndex * 120);
     const tick = () => {
       if (i >= this.expected.length) {
         this.statusText.setText('Your turn!');

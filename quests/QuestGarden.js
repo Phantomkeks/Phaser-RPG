@@ -1,5 +1,6 @@
-// Quest 9: Garden of Memories — plant on a 4x4 grid; match 3 same-color blooms
-// in any row or column to count as one "heart row." Bloom 4 heart rows to win.
+// Quest 9: Garden of Memories — plant from a visible seed queue on a 4x4 grid.
+// Match 3 same-color blooms in any row/column to count as one heart row.
+// Bloom HEARTS_TO_WIN heart rows to win.
 class QuestGarden extends BaseScene {
   constructor() { super('QuestGarden'); }
 
@@ -9,19 +10,24 @@ class QuestGarden extends BaseScene {
     this.enableEscToOverworld();
 
     this.addQuestTitle('QUEST 9: GARDEN OF MEMORIES', THEME.colors.mint);
-    this.addSubtitle('Click a tile to plant. 3 same-color in a line = a heart row.', 60);
+    this.addSubtitle('Plant the next seed. 3 same-color in a line = a heart row.', 60);
 
     this.makeTextures();
 
     this.GRID = 4;
     this.HEARTS_TO_WIN = 4;
+    this.QUEUE_SIZE = 3;
     this.cell = 70;
-    this.startX = (width - (this.GRID - 1) * this.cell) / 2;
+
+    this.flowerColors = ['pink', 'gold', 'mint', 'red'];
+
+    // Center grid horizontally, leaving room on the right for the seed bag.
+    const gridW = (this.GRID - 1) * this.cell;
+    this.startX = (width - gridW) / 2 - 60;
     this.startY = 130;
 
-    this.tiles = []; // 2D array of { sprite, color, sprouting, locked }
+    this.tiles = [];
     this.heartsBloomed = 0;
-    this.flowerColors = ['pink', 'gold', 'mint', 'red'];
 
     for (let r = 0; r < this.GRID; r++) {
       this.tiles[r] = [];
@@ -35,8 +41,13 @@ class QuestGarden extends BaseScene {
       }
     }
 
+    this.queue = [];
+    for (let i = 0; i < this.QUEUE_SIZE; i++) this.queue.push(this.randomColor());
+    this.buildSeedBag();
+    this.renderQueue();
+
     this.statusText = this.add.text(width / 2, height - 60,
-      'Click any tile to plant a seed.', {
+      'Plant the front seed. Plan ahead!', {
         ...THEME.text.body, color: THEME.colors.gold
       }).setOrigin(0.5);
 
@@ -44,16 +55,55 @@ class QuestGarden extends BaseScene {
       { ...THEME.text.hud, color: THEME.colors.pink });
   }
 
+  randomColor() {
+    return Phaser.Utils.Array.GetRandom(this.flowerColors);
+  }
+
+  buildSeedBag() {
+    const { width } = this.scale;
+    const bagX = width - 110;
+    const bagY = this.startY;
+
+    this.add.text(bagX, bagY - 40, 'SEED BAG', {
+      ...THEME.text.body, color: THEME.colors.gold
+    }).setOrigin(0.5);
+
+    this.add.text(bagX, bagY - 20, 'NEXT ↓', THEME.text.tiny).setOrigin(0.5);
+
+    // Three queue slots stacked vertically; index 0 is "next to plant".
+    this.queueSprites = [];
+    for (let i = 0; i < this.QUEUE_SIZE; i++) {
+      const y = bagY + i * 60;
+      const slot = this.add.image(bagX, y, 'soil').setScale(3).setAlpha(0.4);
+      const seed = this.add.image(bagX, y, 'flower_pink').setScale(3);
+      this.queueSprites.push({ slot, seed });
+    }
+  }
+
+  renderQueue() {
+    this.queueSprites.forEach((s, i) => {
+      const color = this.queue[i];
+      s.seed.setTexture('flower_' + color);
+      // Highlight the next seed; dim the others.
+      const isNext = i === 0;
+      s.seed.setScale(isNext ? 4 : 3);
+      s.seed.setAlpha(isNext ? 1 : 0.6);
+    });
+  }
+
   plant(r, c) {
     const tile = this.tiles[r][c];
     if (tile.color || tile.sprouting || tile.locked) return;
+
+    const color = this.queue.shift();
+    this.queue.push(this.randomColor());
+    this.renderQueue();
 
     tile.sprouting = true;
     tile.sprite.setTexture('seed');
     this.statusText.setText('Sprouting...');
 
-    this.time.delayedCall(1500, () => {
-      const color = Phaser.Utils.Array.GetRandom(this.flowerColors);
+    this.time.delayedCall(600, () => {
       tile.color = color;
       tile.sprouting = false;
       tile.sprite.setTexture('flower_' + color);
@@ -79,7 +129,6 @@ class QuestGarden extends BaseScene {
     }
 
     if (matches.length === 0) return;
-
     matches.forEach(line => this.bloomLine(line));
   }
 
@@ -96,7 +145,6 @@ class QuestGarden extends BaseScene {
     this.heartsText.setText(`HEARTS: ${this.heartsBloomed}/${this.HEARTS_TO_WIN}`);
     this.statusText.setText('A row of love! ♥').setColor(THEME.colors.mint);
 
-    // Pulse the matched flowers and turn them into hearts.
     line.forEach((t, i) => {
       this.tweens.add({
         targets: t.sprite, scale: 5, duration: 200, yoyo: true, delay: i * 80,
