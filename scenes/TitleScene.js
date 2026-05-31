@@ -12,13 +12,11 @@ class TitleScene extends BaseScene {
 
     this.add.text(width / 2, height / 3 + 60, "A Wedding Adventure", THEME.text.subtitle).setOrigin(0.5);
 
-    const startBtn = this.addButton(
-      width / 2,
-      height * 0.65,
-      "> PRESS START <",
-      () => this.scene.start("IntroScene"),
-      { ...THEME.text.button, fontSize: "20px", padding: { x: 20, y: 12 } }
-    );
+    const startBtn = this.addButton(width / 2, height * 0.65, "> PRESS START <", () => this.scene.start("IntroScene"), {
+      ...THEME.text.button,
+      fontSize: "20px",
+      padding: { x: 20, y: 12 },
+    });
 
     this.tweens.add({
       targets: startBtn,
@@ -29,7 +27,7 @@ class TitleScene extends BaseScene {
     });
 
     this.add
-      .text(width / 2, height - 30, "Two hearts. Five quests. One forever.", {
+      .text(width / 2, height - 30, "Two hearts. Ten quests. One forever.", {
         ...THEME.text.small,
         fontSize: "10px",
         color: THEME.colors.gray,

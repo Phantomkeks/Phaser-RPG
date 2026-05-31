@@ -27,18 +27,44 @@ class OverworldScene extends BaseScene {
         y: 130,
         label: "SOCK\nMONSTER",
         color: THEME.colors.red,
+        icon: "sock",
       },
-      { key: "coffeeCups", scene: "QuestCoffeeCups", x: 260, y: 110, label: "COFFEE\nQUEST", color: THEME.colors.blue },
+      {
+        key: "coffeeCups",
+        scene: "QuestCoffeeCups",
+        x: 260,
+        y: 110,
+        label: "COFFEE\nQUEST",
+        color: THEME.colors.gold,
+        icon: "coffee",
+      },
       {
         key: "weddingRing",
         scene: "QuestWeddingRing",
         x: 420,
         y: 130,
         label: "WEDDING\nRING",
-        color: THEME.colors.gold,
+        color: THEME.colors.green,
+        icon: "ring",
       },
-      { key: "photoAlbum", scene: "QuestPhotoAlbum", x: 580, y: 110, label: "PHOTO\nALBUM", color: THEME.colors.blue },
-      { key: "vows", scene: "QuestVows", x: 720, y: 130, label: "WRITE\nVOWS", color: THEME.colors.gold },
+      {
+        key: "photoAlbum",
+        scene: "QuestPhotoAlbum",
+        x: 580,
+        y: 110,
+        label: "PHOTO\nALBUM",
+        color: THEME.colors.blue,
+        icon: "camera",
+      },
+      {
+        key: "vows",
+        scene: "QuestVows",
+        x: 720,
+        y: 130,
+        label: "WRITE\nVOWS",
+        color: THEME.colors.lavender,
+        icon: "scroll",
+      },
       // Bottom row
       {
         key: "cookTogether",
@@ -46,12 +72,45 @@ class OverworldScene extends BaseScene {
         x: 100,
         y: 420,
         label: "COOK\nTOGETHER",
-        color: THEME.colors.mint,
+        color: THEME.colors.coral,
+        icon: "pan",
       },
-      { key: "garden", scene: "QuestGarden", x: 260, y: 440, label: "GARDEN", color: THEME.colors.mint },
-      { key: "dance", scene: "QuestDance", x: 420, y: 420, label: "DANCE\nTOGETHER", color: THEME.colors.pink },
-      { key: "cake", scene: "QuestCake", x: 580, y: 440, label: "RESCUE\nTHE CAKE", color: THEME.colors.pink },
-      { key: "planTrip", scene: "QuestPlanTrip", x: 720, y: 420, label: "PLAN\nA TRIP", color: THEME.colors.pink },
+      {
+        key: "garden",
+        scene: "QuestGarden",
+        x: 260,
+        y: 440,
+        label: "GARDEN",
+        color: THEME.colors.lime,
+        icon: "flower",
+      },
+      {
+        key: "dance",
+        scene: "QuestDance",
+        x: 420,
+        y: 420,
+        label: "DANCE\nTOGETHER",
+        color: THEME.colors.purple,
+        icon: "note",
+      },
+      {
+        key: "cake",
+        scene: "QuestCake",
+        x: 580,
+        y: 440,
+        label: "RESCUE\nTHE CAKE",
+        color: THEME.colors.pink,
+        icon: "cake",
+      },
+      {
+        key: "planTrip",
+        scene: "QuestPlanTrip",
+        x: 720,
+        y: 420,
+        label: "PLAN\nA TRIP",
+        color: THEME.colors.teal,
+        icon: "suitcase",
+      },
     ];
 
     this.questSprites = [];
@@ -99,28 +158,101 @@ class OverworldScene extends BaseScene {
     g.fillStyle(0x9c6644, 1);
     g.fillRect(0, this.scale.height / 2 - 8, this.scale.width, 16);
     g.fillRect(this.scale.width / 2 - 8, 0, 16, this.scale.height);
+
+    // Deterministic decorations so the layout is stable between renders.
+    const rand = Phaser.Math.RND;
+    rand.sow(["marriage-quest-map"]);
+
+    // Grass tufts: tiny darker pixels scattered for texture.
+    g.fillStyle(0x1b4332, 0.7);
+    for (let i = 0; i < 180; i++) {
+      const x = rand.between(0, this.scale.width - 4);
+      const y = rand.between(0, this.scale.height - 4);
+      if (this.onPath(x, y)) continue;
+      g.fillRect(x, y, 2, 2);
+      g.fillRect(x + 3, y + 1, 1, 1);
+    }
+
+    // Pixel flowers in pink / gold / white.
+    const petalColors = [0xff6ec7, 0xffd166, 0xffffff];
+    for (let i = 0; i < 40; i++) {
+      const x = rand.between(8, this.scale.width - 12);
+      const y = rand.between(8, this.scale.height - 12);
+      if (this.onPath(x, y)) continue;
+      const c = Phaser.Utils.Array.GetRandom(petalColors);
+      g.fillStyle(c, 1);
+      g.fillRect(x, y - 2, 2, 2);
+      g.fillRect(x - 2, y, 2, 2);
+      g.fillRect(x + 2, y, 2, 2);
+      g.fillRect(x, y + 2, 2, 2);
+      g.fillStyle(0xffd166, 1);
+      g.fillRect(x, y, 2, 2);
+    }
+
+    // A few mushrooms for charm.
+    for (let i = 0; i < 8; i++) {
+      const x = rand.between(20, this.scale.width - 20);
+      const y = rand.between(20, this.scale.height - 20);
+      if (this.onPath(x, y)) continue;
+      g.fillStyle(0xffffff, 1);
+      g.fillRect(x + 1, y + 3, 3, 2);
+      g.fillStyle(0xef476f, 1);
+      g.fillRect(x, y, 5, 3);
+      g.fillStyle(0xffffff, 1);
+      g.fillRect(x + 1, y + 1, 1, 1);
+      g.fillRect(x + 3, y + 1, 1, 1);
+    }
+  }
+
+  // True if a point sits on the brown crossroad — keeps decorations off the path.
+  onPath(x, y) {
+    const midY = this.scale.height / 2;
+    const midX = this.scale.width / 2;
+    return (y > midY - 12 && y < midY + 12) || (x > midX - 12 && x < midX + 12);
   }
 
   makeQuestNode(q) {
     const done = GameState.quests[q.key];
     const colorInt = Phaser.Display.Color.HexStringToColor(q.color).color;
 
+    // Container so we can pulse the whole node (ring + icon) together.
+    const container = this.add.container(q.x, q.y);
+
+    if (!done) {
+      const glow = this.add.graphics();
+      glow.fillStyle(colorInt, 0.25);
+      glow.fillCircle(0, 0, 32);
+      container.add(glow);
+    }
+
     const node = this.add.graphics();
     node.fillStyle(done ? 0x444444 : colorInt, 1);
     node.fillCircle(0, 0, 24);
     node.lineStyle(3, 0xffffff, 1);
     node.strokeCircle(0, 0, 24);
-    node.x = q.x;
-    node.y = q.y;
+    container.add(node);
 
     if (done) {
-      this.add
-        .text(q.x, q.y, "✓", {
+      const check = this.add
+        .text(0, 0, "✓", {
           ...THEME.text.questHeader,
           fontSize: "20px",
           color: THEME.colors.mint,
         })
         .setOrigin(0.5);
+      container.add(check);
+    } else {
+      const icon = this.drawQuestIcon(q.icon);
+      if (icon) container.add(icon);
+
+      this.tweens.add({
+        targets: container,
+        scale: { from: 1, to: 1.08 },
+        duration: 700,
+        yoyo: true,
+        repeat: -1,
+        ease: "Sine.easeInOut",
+      });
     }
 
     this.add
@@ -138,23 +270,372 @@ class OverworldScene extends BaseScene {
     this.questSprites.push(zone);
   }
 
+  // Returns a Graphics drawing of a tiny pixel icon centered on (0,0).
+  // Each "pixel" in the icon grid is rendered as a 2x2 px block.
+  drawQuestIcon(name) {
+    const g = this.add.graphics();
+    const px = 2;
+    const draw = (cells, color) => {
+      g.fillStyle(color, 1);
+      cells.forEach(([cx, cy]) => g.fillRect(cx * px, cy * px, px, px));
+    };
+    // Coordinates are relative to a small grid; we offset to roughly center it.
+    const offset = (cx, cy) => [cx - 5, cy - 5];
+    const cells = (arr) => arr.map(([x, y]) => offset(x, y));
+
+    switch (name) {
+      case "sock":
+        draw(
+          cells([
+            [3, 2],
+            [4, 2],
+            [5, 2],
+            [6, 2],
+            [3, 3],
+            [6, 3],
+            [3, 4],
+            [6, 4],
+            [3, 5],
+            [6, 5],
+            [3, 6],
+            [6, 6],
+            [7, 6],
+            [3, 7],
+            [7, 7],
+          ]),
+          0xffffff
+        );
+        draw(
+          cells([
+            [3, 2],
+            [4, 2],
+            [5, 2],
+            [6, 2],
+            [3, 3],
+            [6, 3],
+          ]),
+          0xff6ec7
+        );
+        break;
+      case "coffee":
+        draw(
+          cells([
+            [3, 3],
+            [4, 3],
+            [5, 3],
+            [6, 3],
+            [3, 4],
+            [6, 4],
+            [7, 4],
+            [3, 5],
+            [6, 5],
+            [7, 5],
+            [3, 6],
+            [6, 6],
+            [3, 7],
+            [4, 7],
+            [5, 7],
+            [6, 7],
+          ]),
+          0xffffff
+        );
+        draw(
+          cells([
+            [4, 2],
+            [5, 2],
+          ]),
+          0xffffff
+        ); // steam
+        break;
+      case "ring":
+        draw(
+          cells([
+            [4, 2],
+            [5, 2],
+          ]),
+          0x9be7ff
+        ); // gem
+        draw(
+          cells([
+            [3, 3],
+            [4, 4],
+            [5, 4],
+            [6, 3],
+            [3, 5],
+            [6, 5],
+            [4, 6],
+            [5, 6],
+          ]),
+          0xffd166
+        );
+        break;
+      case "camera":
+        draw(
+          cells([
+            [3, 3],
+            [4, 3],
+            [5, 3],
+            [6, 3],
+            [7, 3],
+            [3, 4],
+            [7, 4],
+            [3, 5],
+            [7, 5],
+            [3, 6],
+            [4, 6],
+            [5, 6],
+            [6, 6],
+            [7, 6],
+          ]),
+          0x222222
+        );
+        draw(
+          cells([
+            [5, 4],
+            [5, 5],
+            [6, 4],
+          ]),
+          0x9be7ff
+        ); // lens
+        draw(cells([[6, 2]]), 0xff6ec7); // flash
+        break;
+      case "scroll":
+        draw(
+          cells([
+            [3, 2],
+            [4, 2],
+            [5, 2],
+            [6, 2],
+            [7, 2],
+            [3, 3],
+            [7, 3],
+            [3, 4],
+            [4, 4],
+            [5, 4],
+            [6, 4],
+            [7, 4],
+            [3, 5],
+            [7, 5],
+            [3, 6],
+            [4, 6],
+            [5, 6],
+            [6, 6],
+            [7, 6],
+            [3, 7],
+            [7, 7],
+          ]),
+          0xfff3b0
+        );
+        draw(
+          cells([
+            [4, 4],
+            [5, 4],
+            [6, 4],
+            [4, 6],
+            [5, 6],
+          ]),
+          0x9c6644
+        );
+        break;
+      case "pan":
+        draw(
+          cells([
+            [3, 4],
+            [4, 4],
+            [5, 4],
+            [6, 4],
+            [7, 4],
+            [3, 5],
+            [7, 5],
+            [3, 6],
+            [4, 6],
+            [5, 6],
+            [6, 6],
+            [7, 6],
+            [8, 5],
+          ]),
+          0x222222
+        );
+        draw(cells([[5, 3]]), 0xffd166); // sizzle
+        break;
+      case "flower":
+        draw(cells([[5, 3]]), 0xffd166); // center
+        draw(
+          cells([
+            [4, 2],
+            [6, 2],
+            [4, 4],
+            [6, 4],
+            [5, 2],
+            [5, 4],
+            [3, 3],
+            [7, 3],
+          ]),
+          0xff6ec7
+        );
+        draw(
+          cells([
+            [5, 5],
+            [5, 6],
+            [5, 7],
+            [4, 7],
+            [6, 7],
+          ]),
+          0x06d6a0
+        );
+        break;
+      case "note":
+        draw(
+          cells([
+            [5, 2],
+            [6, 2],
+            [5, 3],
+            [6, 3],
+            [5, 4],
+            [6, 4],
+            [5, 5],
+            [3, 5],
+            [4, 5],
+            [3, 6],
+            [4, 6],
+          ]),
+          0xffffff
+        );
+        break;
+      case "cake":
+        draw(
+          cells([
+            [4, 2],
+            [5, 2],
+            [6, 2],
+          ]),
+          0xffd166
+        ); // candles top
+        draw(
+          cells([
+            [3, 3],
+            [4, 3],
+            [5, 3],
+            [6, 3],
+            [7, 3],
+          ]),
+          0xff6ec7
+        );
+        draw(
+          cells([
+            [3, 4],
+            [4, 4],
+            [5, 4],
+            [6, 4],
+            [7, 4],
+          ]),
+          0xffffff
+        );
+        draw(
+          cells([
+            [2, 5],
+            [3, 5],
+            [4, 5],
+            [5, 5],
+            [6, 5],
+            [7, 5],
+            [8, 5],
+          ]),
+          0xff6ec7
+        );
+        draw(
+          cells([
+            [2, 6],
+            [3, 6],
+            [4, 6],
+            [5, 6],
+            [6, 6],
+            [7, 6],
+            [8, 6],
+          ]),
+          0xffffff
+        );
+        break;
+      case "suitcase":
+        draw(
+          cells([
+            [5, 2],
+            [6, 2],
+          ]),
+          0x9c6644
+        ); // handle
+        draw(
+          cells([
+            [3, 3],
+            [4, 3],
+            [5, 3],
+            [6, 3],
+            [7, 3],
+            [8, 3],
+            [3, 4],
+            [8, 4],
+            [3, 5],
+            [8, 5],
+            [3, 6],
+            [4, 6],
+            [5, 6],
+            [6, 6],
+            [7, 6],
+            [8, 6],
+          ]),
+          0x9c6644
+        );
+        draw(
+          cells([
+            [5, 4],
+            [6, 4],
+            [5, 5],
+            [6, 5],
+          ]),
+          0xffd166
+        );
+        break;
+      default:
+        return null;
+    }
+    return g;
+  }
+
   checkFinale() {
     if (!GameState.allQuestsComplete()) return;
     const x = this.scale.width / 2;
     const y = this.scale.height / 2;
+
+    const finaleContainer = this.add.container(x, y);
+    const glow = this.add.graphics();
+    glow.fillStyle(0xff6ec7, 0.3);
+    glow.fillCircle(0, 0, 44);
+    finaleContainer.add(glow);
+
     const g = this.add.graphics();
     g.fillStyle(0xff6ec7, 1);
-    g.fillCircle(x, y, 30);
+    g.fillCircle(0, 0, 30);
     g.lineStyle(4, 0xffd166, 1);
-    g.strokeCircle(x, y, 30);
+    g.strokeCircle(0, 0, 30);
+    finaleContainer.add(g);
 
-    this.add
-      .text(x, y, "♥", {
+    const heart = this.add
+      .text(0, 0, "♥", {
         ...THEME.text.questHeader,
         fontSize: "24px",
         color: THEME.colors.white,
       })
       .setOrigin(0.5);
+    finaleContainer.add(heart);
+
+    this.tweens.add({
+      targets: finaleContainer,
+      scale: { from: 1, to: 1.15 },
+      duration: 600,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.easeInOut",
+    });
 
     this.add
       .text(x, y + 50, "FINALE!", {
