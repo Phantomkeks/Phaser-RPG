@@ -1,22 +1,4 @@
 class BaseScene extends Phaser.Scene {
-  init() {
-    // RESIZE scale mode means the canvas matches the viewport; on rotate or
-    // window resize, restart the active scene so create() re-lays out for the
-    // new dimensions. Debounced to avoid thrash while a desktop user drags.
-    this._resizeTimer = null;
-    const onResize = () => {
-      if (this._resizeTimer) clearTimeout(this._resizeTimer);
-      this._resizeTimer = setTimeout(() => {
-        if (this.scene.isActive()) this.scene.restart();
-      }, 150);
-    };
-    this.scale.on("resize", onResize);
-    this.events.once("shutdown", () => {
-      this.scale.off("resize", onResize);
-      if (this._resizeTimer) clearTimeout(this._resizeTimer);
-    });
-  }
-
   // Adds a top-of-screen quest title in the given color.
   addQuestTitle(text, color) {
     const { width } = this.scale;

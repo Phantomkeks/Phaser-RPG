@@ -6,8 +6,6 @@ class OverworldScene extends BaseScene {
   create() {
     const { width, height } = this.scale;
 
-    this.physics.world.setBounds(0, 0, width, height);
-
     this.drawMap();
 
     this.add
@@ -19,32 +17,42 @@ class OverworldScene extends BaseScene {
       })
       .setOrigin(0.5);
 
-    // Layout fractions: 5 columns spread across width, 2 rows at 22% and 72% of height.
-    // Using fractions (not pixels) so the map fills any viewport — phone, tablet, desktop.
-    const cols = [0.12, 0.31, 0.5, 0.69, 0.88];
-    const rowTop = 0.22;
-    const rowBottom = 0.72;
-
-    // 10 quest nodes on a 5x2 grid; finale unlocks in the dead center.
+    // 10 quest nodes laid out on a rough 5x2 grid; finale unlocks in the dead center.
     this.questNodes = [
       // Top row
-      { key: "sockMonster", scene: "QuestSockMonster", fx: cols[0], fy: rowTop, label: "SOCK\nMONSTER", color: THEME.colors.red },
-      { key: "coffeeCups", scene: "QuestCoffeeCups", fx: cols[1], fy: rowTop, label: "COFFEE\nQUEST", color: THEME.colors.blue },
-      { key: "weddingRing", scene: "QuestWeddingRing", fx: cols[2], fy: rowTop, label: "WEDDING\nRING", color: THEME.colors.gold },
-      { key: "photoAlbum", scene: "QuestPhotoAlbum", fx: cols[3], fy: rowTop, label: "PHOTO\nALBUM", color: THEME.colors.blue },
-      { key: "vows", scene: "QuestVows", fx: cols[4], fy: rowTop, label: "WRITE\nVOWS", color: THEME.colors.gold },
+      {
+        key: "sockMonster",
+        scene: "QuestSockMonster",
+        x: 100,
+        y: 130,
+        label: "SOCK\nMONSTER",
+        color: THEME.colors.red,
+      },
+      { key: "coffeeCups", scene: "QuestCoffeeCups", x: 260, y: 110, label: "COFFEE\nQUEST", color: THEME.colors.blue },
+      {
+        key: "weddingRing",
+        scene: "QuestWeddingRing",
+        x: 420,
+        y: 130,
+        label: "WEDDING\nRING",
+        color: THEME.colors.gold,
+      },
+      { key: "photoAlbum", scene: "QuestPhotoAlbum", x: 580, y: 110, label: "PHOTO\nALBUM", color: THEME.colors.blue },
+      { key: "vows", scene: "QuestVows", x: 720, y: 130, label: "WRITE\nVOWS", color: THEME.colors.gold },
       // Bottom row
-      { key: "cookTogether", scene: "QuestCookTogether", fx: cols[0], fy: rowBottom, label: "COOK\nTOGETHER", color: THEME.colors.mint },
-      { key: "garden", scene: "QuestGarden", fx: cols[1], fy: rowBottom, label: "GARDEN", color: THEME.colors.mint },
-      { key: "dance", scene: "QuestDance", fx: cols[2], fy: rowBottom, label: "DANCE\nTOGETHER", color: THEME.colors.pink },
-      { key: "cake", scene: "QuestCake", fx: cols[3], fy: rowBottom, label: "RESCUE\nTHE CAKE", color: THEME.colors.pink },
-      { key: "planTrip", scene: "QuestPlanTrip", fx: cols[4], fy: rowBottom, label: "PLAN\nA TRIP", color: THEME.colors.pink },
+      {
+        key: "cookTogether",
+        scene: "QuestCookTogether",
+        x: 100,
+        y: 420,
+        label: "COOK\nTOGETHER",
+        color: THEME.colors.mint,
+      },
+      { key: "garden", scene: "QuestGarden", x: 260, y: 440, label: "GARDEN", color: THEME.colors.mint },
+      { key: "dance", scene: "QuestDance", x: 420, y: 420, label: "DANCE\nTOGETHER", color: THEME.colors.pink },
+      { key: "cake", scene: "QuestCake", x: 580, y: 440, label: "RESCUE\nTHE CAKE", color: THEME.colors.pink },
+      { key: "planTrip", scene: "QuestPlanTrip", x: 720, y: 420, label: "PLAN\nA TRIP", color: THEME.colors.pink },
     ];
-
-    this.questNodes.forEach((q) => {
-      q.x = q.fx * width;
-      q.y = q.fy * height;
-    });
 
     this.questSprites = [];
     this.questNodes.forEach((q) => this.makeQuestNode(q));
