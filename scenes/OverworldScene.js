@@ -136,7 +136,8 @@ class OverworldScene extends BaseScene {
       .text(width / 2, height - 30, "Walk into a node to start a quest. Arrow keys to move.", {
         ...THEME.text.tiny,
         fontSize: "9px",
-        backgroundColor: THEME.colors.black,
+        color: "#fff3b0",
+        backgroundColor: "#4a2c2a",
         padding: { x: 8, y: 4 },
       })
       .setOrigin(0.5);
@@ -146,69 +147,159 @@ class OverworldScene extends BaseScene {
   }
 
   drawMap() {
-    const g = this.add.graphics();
-    const tile = 16;
-    for (let y = 0; y < this.scale.height; y += tile) {
-      for (let x = 0; x < this.scale.width; x += tile) {
-        const c = ((x + y) / tile) % 2 === 0 ? 0x2d6a4f : 0x40916c;
-        g.fillStyle(c, 1);
-        g.fillRect(x, y, tile, tile);
-      }
-    }
-    g.fillStyle(0x9c6644, 1);
-    g.fillRect(0, this.scale.height / 2 - 8, this.scale.width, 16);
-    g.fillRect(this.scale.width / 2 - 8, 0, 16, this.scale.height);
+    const w = this.scale.width;
+    const h = this.scale.height;
 
-    // Deterministic decorations so the layout is stable between renders.
+    // Parchment base — warm cream with vertical streaks for an aged-paper feel.
+    const g = this.add.graphics();
+    g.fillStyle(0xe9d5a1, 1);
+    g.fillRect(0, 0, w, h);
+
     const rand = Phaser.Math.RND;
     rand.sow(["marriage-quest-map"]);
 
-    // Grass tufts: tiny darker pixels scattered for texture.
-    g.fillStyle(0x1b4332, 0.7);
-    for (let i = 0; i < 180; i++) {
-      const x = rand.between(0, this.scale.width - 4);
-      const y = rand.between(0, this.scale.height - 4);
-      if (this.onPath(x, y)) continue;
-      g.fillRect(x, y, 2, 2);
-      g.fillRect(x + 3, y + 1, 1, 1);
-    }
-
-    // Pixel flowers in pink / gold / white.
-    const petalColors = [0xff6ec7, 0xffd166, 0xffffff];
-    for (let i = 0; i < 40; i++) {
-      const x = rand.between(8, this.scale.width - 12);
-      const y = rand.between(8, this.scale.height - 12);
-      if (this.onPath(x, y)) continue;
-      const c = Phaser.Utils.Array.GetRandom(petalColors);
-      g.fillStyle(c, 1);
-      g.fillRect(x, y - 2, 2, 2);
-      g.fillRect(x - 2, y, 2, 2);
-      g.fillRect(x + 2, y, 2, 2);
-      g.fillRect(x, y + 2, 2, 2);
-      g.fillStyle(0xffd166, 1);
+    // Subtle paper grain — scattered darker and lighter specks.
+    for (let i = 0; i < 1200; i++) {
+      const x = rand.between(0, w);
+      const y = rand.between(0, h);
+      g.fillStyle(rand.pick([0xd4b483, 0xf3e4bb, 0xc9a874]), rand.realInRange(0.15, 0.4));
       g.fillRect(x, y, 2, 2);
     }
 
-    // A few mushrooms for charm.
-    for (let i = 0; i < 8; i++) {
-      const x = rand.between(20, this.scale.width - 20);
-      const y = rand.between(20, this.scale.height - 20);
-      if (this.onPath(x, y)) continue;
-      g.fillStyle(0xffffff, 1);
-      g.fillRect(x + 1, y + 3, 3, 2);
-      g.fillStyle(0xef476f, 1);
-      g.fillRect(x, y, 5, 3);
-      g.fillStyle(0xffffff, 1);
-      g.fillRect(x + 1, y + 1, 1, 1);
-      g.fillRect(x + 3, y + 1, 1, 1);
+    // Coffee-stain blotches for character.
+    for (let i = 0; i < 5; i++) {
+      const cx = rand.between(60, w - 60);
+      const cy = rand.between(60, h - 60);
+      const r = rand.between(20, 40);
+      g.fillStyle(0xb8945a, 0.18);
+      g.fillCircle(cx, cy, r);
+      g.fillStyle(0x8b6f3d, 0.12);
+      g.fillCircle(cx + rand.between(-6, 6), cy + rand.between(-6, 6), r * 0.6);
+    }
+
+    // Torn-edge frame: dark inner border with rough corner notches.
+    const frame = this.add.graphics();
+    const ink = 0x4a2c2a;
+    frame.lineStyle(3, ink, 0.85);
+    frame.strokeRect(12, 12, w - 24, h - 24);
+    frame.lineStyle(1, ink, 0.5);
+    frame.strokeRect(18, 18, w - 36, h - 36);
+    // Corner flourishes
+    [
+      [18, 18, 1, 1],
+      [w - 18, 18, -1, 1],
+      [18, h - 18, 1, -1],
+      [w - 18, h - 18, -1, -1],
+    ].forEach(([cx, cy, dx, dy]) => {
+      frame.lineStyle(2, ink, 0.9);
+      frame.beginPath();
+      frame.moveTo(cx + 14 * dx, cy);
+      frame.lineTo(cx, cy);
+      frame.lineTo(cx, cy + 14 * dy);
+      frame.strokePath();
+    });
+
+    // Dotted ink paths between quest nodes (in suggested play order).
+    // We draw them BEFORE the decorations so foliage can sit on top.
+    const order = [
+      [100, 130], [260, 110], [420, 130], [580, 110], [720, 130],
+      [720, 420], [580, 440], [420, 420], [260, 440], [100, 420],
+    ];
+    this.drawDottedPath(order, ink);
+
+    // Tiny pixel illustrations between/around nodes — tucked into the gaps so
+    // they decorate without crowding the path.
+    const illustrations = [
+      { type: "mountain", x: 60, y: 260 },
+      { type: "mountain", x: 740, y: 260 },
+      { type: "tree", x: 180, y: 240 },
+      { type: "tree", x: 340, y: 250 },
+      { type: "tree", x: 500, y: 240 },
+      { type: "tree", x: 660, y: 250 },
+      { type: "tree", x: 180, y: 320 },
+      { type: "tree", x: 660, y: 320 },
+      { type: "hill", x: 380, y: 300 },
+      { type: "hill", x: 480, y: 320 },
+      { type: "flower", x: 60, y: 200 },
+      { type: "flower", x: 740, y: 200 },
+      { type: "flower", x: 60, y: 350 },
+      { type: "flower", x: 740, y: 350 },
+      { type: "flower", x: 200, y: 540 },
+      { type: "flower", x: 600, y: 540 },
+      { type: "flower", x: 130, y: 80 },
+      { type: "flower", x: 670, y: 80 },
+      { type: "compass", x: 60, y: 540 },
+      { type: "scroll", x: 740, y: 540 },
+    ];
+    illustrations.forEach((d) => this.drawDecoration(d));
+
+    // "X marks the spot" in the very center where the finale unlocks.
+    this.add
+      .text(w / 2, h / 2 - 80, "✦  HERE WAITS FOREVER  ✦", {
+        fontFamily: '"Press Start 2P"',
+        fontSize: "8px",
+        color: "#4a2c2a",
+      })
+      .setOrigin(0.5)
+      .setAlpha(0.5);
+  }
+
+  drawDottedPath(points, color) {
+    const g = this.add.graphics();
+    g.fillStyle(color, 0.55);
+    for (let i = 0; i < points.length - 1; i++) {
+      const [x1, y1] = points[i];
+      const [x2, y2] = points[i + 1];
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const steps = Math.floor(dist / 10);
+      for (let s = 1; s < steps; s++) {
+        const t = s / steps;
+        // Slight sine wiggle so the path feels hand-drawn, not ruler-straight.
+        const wobble = Math.sin(t * Math.PI * 3) * 4;
+        const nx = -dy / dist;
+        const ny = dx / dist;
+        const px = x1 + dx * t + nx * wobble;
+        const py = y1 + dy * t + ny * wobble;
+        g.fillRect(px - 1, py - 1, 2, 2);
+      }
     }
   }
 
-  // True if a point sits on the brown crossroad — keeps decorations off the path.
-  onPath(x, y) {
-    const midY = this.scale.height / 2;
-    const midX = this.scale.width / 2;
-    return (y > midY - 12 && y < midY + 12) || (x > midX - 12 && x < midX + 12);
+  drawDecoration({ type, x, y }) {
+    const g = this.add.graphics();
+    const px = 2;
+    const draw = (cells, color, alpha = 1) => {
+      g.fillStyle(color, alpha);
+      cells.forEach(([cx, cy]) => g.fillRect(x + cx * px, y + cy * px, px, px));
+    };
+    switch (type) {
+      case "mountain":
+        draw([[3,0],[2,1],[3,1],[4,1],[1,2],[2,2],[3,2],[4,2],[5,2],[0,3],[1,3],[2,3],[3,3],[4,3],[5,3],[6,3]], 0x8b6f3d);
+        draw([[2,1],[3,0],[1,2],[0,3]], 0xfff3b0); // snow cap highlights
+        break;
+      case "tree":
+        draw([[2,0],[1,1],[2,1],[3,1],[0,2],[1,2],[2,2],[3,2],[4,2],[1,3],[2,3],[3,3]], 0x4a7c3a);
+        draw([[2,4],[2,5]], 0x5a3a1a);
+        break;
+      case "hill":
+        draw([[2,2],[3,2],[4,2],[1,3],[2,3],[3,3],[4,3],[5,3],[0,4],[1,4],[2,4],[3,4],[4,4],[5,4],[6,4]], 0x9c8050);
+        break;
+      case "flower":
+        draw([[1,1],[2,0],[3,1],[2,2]], 0xff6ec7);
+        draw([[2,1]], 0xffd166);
+        draw([[2,3],[2,4]], 0x4a7c3a);
+        break;
+      case "compass":
+        draw([[2,0],[1,1],[2,1],[3,1],[0,2],[1,2],[2,2],[3,2],[4,2],[1,3],[2,3],[3,3],[2,4]], 0x4a2c2a);
+        draw([[2,2]], 0xffd166);
+        break;
+      case "scroll":
+        draw([[0,1],[1,1],[2,1],[3,1],[4,1],[0,2],[4,2],[0,3],[1,3],[2,3],[3,3],[4,3]], 0xfff3b0);
+        draw([[1,2],[2,2],[3,2]], 0x8b6f3d);
+        break;
+    }
   }
 
   makeQuestNode(q) {
