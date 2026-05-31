@@ -16,7 +16,7 @@ class TitleScene extends BaseScene {
       width / 2,
       height * 0.65,
       "> PRESS START <",
-      () => this.scene.start("AvatarScene"),
+      () => this.scene.start("IntroScene"),
       { ...THEME.text.button, fontSize: "20px", padding: { x: 20, y: 12 } }
     );
 

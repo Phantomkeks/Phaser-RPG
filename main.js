@@ -11,6 +11,7 @@ const config = {
   },
   scene: [
     TitleScene,
+    IntroScene,
     AvatarScene,
     OverworldScene,
     QuestSockMonster,
