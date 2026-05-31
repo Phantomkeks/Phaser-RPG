@@ -35,7 +35,7 @@ class FinaleScene extends BaseScene {
     this.revealNext();
 
     this.hint = this.add.text(width / 2, height - 25,
-      '↑/↓ to scroll • SPACE for next message', {
+      'SPACE for next message', {
         ...THEME.text.tiny
       }).setOrigin(0.5);
 
