@@ -12,9 +12,12 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prettier": "prettier \"**/*.{js,json,md,yml,yaml,html}\" --write --log-level error"
   },
   "dependencies": {
     "phaser": "3.90.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.8.3"
   }
 }

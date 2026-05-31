@@ -1,54 +1,55 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Marriage Quest</title>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: #0a0a1f;
-      height: 100%;
-      overflow: hidden;
-      font-family: 'Press Start 2P', monospace;
-      color: #fff;
-    }
-    #game {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    canvas {
-      image-rendering: pixelated;
-      image-rendering: crisp-edges;
-      box-shadow: 0 0 32px #ff6ec7;
-      border: 4px solid #ff6ec7;
-    }
-  </style>
-</head>
-<body>
-  <div id="game"></div>
-  <script src="https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js"></script>
-  <script src="data/theme.js"></script>
-  <script src="data/messages.js"></script>
-  <script src="data/gameState.js"></script>
-  <script src="scenes/BaseScene.js"></script>
-  <script src="scenes/TitleScene.js"></script>
-  <script src="scenes/AvatarScene.js"></script>
-  <script src="scenes/OverworldScene.js"></script>
-  <script src="quests/QuestSockMonster.js"></script>
-  <script src="quests/QuestCoffeeCups.js"></script>
-  <script src="quests/QuestWeddingRing.js"></script>
-  <script src="quests/QuestCookTogether.js"></script>
-  <script src="quests/QuestPlanTrip.js"></script>
-  <script src="quests/QuestVows.js"></script>
-  <script src="quests/QuestDance.js"></script>
-  <script src="quests/QuestPhotoAlbum.js"></script>
-  <script src="quests/QuestGarden.js"></script>
-  <script src="quests/QuestCake.js"></script>
-  <script src="scenes/FinaleScene.js"></script>
-  <script src="main.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Marriage Quest</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: #0a0a1f;
+        height: 100%;
+        overflow: hidden;
+        font-family: "Press Start 2P", monospace;
+        color: #fff;
+      }
+      #game {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      canvas {
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
+        box-shadow: 0 0 32px #ff6ec7;
+        border: 4px solid #ff6ec7;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="game"></div>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js"></script>
+    <script src="data/theme.js"></script>
+    <script src="data/messages.js"></script>
+    <script src="data/gameState.js"></script>
+    <script src="scenes/BaseScene.js"></script>
+    <script src="scenes/TitleScene.js"></script>
+    <script src="scenes/AvatarScene.js"></script>
+    <script src="scenes/OverworldScene.js"></script>
+    <script src="quests/QuestSockMonster.js"></script>
+    <script src="quests/QuestCoffeeCups.js"></script>
+    <script src="quests/QuestWeddingRing.js"></script>
+    <script src="quests/QuestCookTogether.js"></script>
+    <script src="quests/QuestPlanTrip.js"></script>
+    <script src="quests/QuestVows.js"></script>
+    <script src="quests/QuestDance.js"></script>
+    <script src="quests/QuestPhotoAlbum.js"></script>
+    <script src="quests/QuestGarden.js"></script>
+    <script src="quests/QuestCake.js"></script>
+    <script src="scenes/FinaleScene.js"></script>
+    <script src="main.js"></script>
+  </body>
 </html>

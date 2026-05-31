@@ -1,4 +1,4 @@
-const STORAGE_KEY = 'marriage-quest-save-v1';
+const STORAGE_KEY = "marriage-quest-save-v1";
 
 const GameState = {
   quests: {
@@ -11,27 +11,30 @@ const GameState = {
     dance: false,
     photoAlbum: false,
     garden: false,
-    cake: false
+    cake: false,
   },
   avatars: {
     bride: null,
-    groom: null
+    groom: null,
   },
   vow: null,
   allQuestsComplete() {
-    return Object.values(this.quests).every(v => v === true);
+    return Object.values(this.quests).every((v) => v === true);
   },
   reset() {
-    Object.keys(this.quests).forEach(k => this.quests[k] = false);
+    Object.keys(this.quests).forEach((k) => (this.quests[k] = false));
     this.vow = null;
     this.save();
   },
   save() {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        quests: this.quests,
-        vow: this.vow
-      }));
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({
+          quests: this.quests,
+          vow: this.vow,
+        })
+      );
     } catch (e) {}
   },
   load() {
@@ -40,13 +43,13 @@ const GameState = {
       if (!raw) return;
       const data = JSON.parse(raw);
       if (data && data.quests) {
-        Object.keys(this.quests).forEach(k => {
-          if (typeof data.quests[k] === 'boolean') this.quests[k] = data.quests[k];
+        Object.keys(this.quests).forEach((k) => {
+          if (typeof data.quests[k] === "boolean") this.quests[k] = data.quests[k];
         });
       }
-      if (data && typeof data.vow === 'string') this.vow = data.vow;
+      if (data && typeof data.vow === "string") this.vow = data.vow;
     } catch (e) {}
-  }
+  },
 };
 
 GameState.load();

@@ -1,0 +1,10 @@
+---
+printWidth: 120
+trailingComma: es5
+xmlWhitespaceSensitivity: ignore
+
+overrides:
+  - files:
+      - "*.xml"
+    options:
+      tabWidth: 4
