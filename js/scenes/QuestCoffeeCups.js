@@ -1,18 +1,14 @@
 // Quest 2: Coffee Cups — collect 10 cups in 30 seconds
-class QuestCoffeeCups extends Phaser.Scene {
+class QuestCoffeeCups extends BaseScene {
   constructor() { super('QuestCoffeeCups'); }
 
   create() {
     const { width, height } = this.scale;
     this.cameras.main.setBackgroundColor('#2d2d2d');
+    this.enableEscToOverworld();
 
-    this.add.text(width / 2, 30, 'QUEST 2: OFFICE COFFEE RUN', {
-      fontFamily: '"Press Start 2P"', fontSize: '14px', color: '#118ab2'
-    }).setOrigin(0.5);
-
-    this.add.text(width / 2, 60, 'Collect 10 coffee cups!', {
-      fontFamily: '"Press Start 2P"', fontSize: '9px', color: '#fff'
-    }).setOrigin(0.5);
+    this.addQuestTitle('QUEST 2: OFFICE COFFEE RUN', THEME.colors.blue);
+    this.addSubtitle('Collect 10 coffee cups!', 60);
 
     this.makeCupTexture();
 
@@ -23,12 +19,9 @@ class QuestCoffeeCups extends Phaser.Scene {
     this.collected = 0;
     this.timeLeft = 30;
 
-    this.scoreText = this.add.text(20, 20, 'CUPS: 0/10', {
-      fontFamily: '"Press Start 2P"', fontSize: '12px', color: '#ffd166'
-    });
-
+    this.scoreText = this.add.text(20, 20, 'CUPS: 0/10', THEME.text.hud);
     this.timeText = this.add.text(width - 20, 20, 'TIME: 30', {
-      fontFamily: '"Press Start 2P"', fontSize: '12px', color: '#ef476f'
+      ...THEME.text.hud, color: THEME.colors.red
     }).setOrigin(1, 0);
 
     this.cups = this.physics.add.group();
@@ -36,7 +29,6 @@ class QuestCoffeeCups extends Phaser.Scene {
     this.spawnTimer = this.time.addEvent({
       delay: 1500, callback: this.spawnCup, callbackScope: this, loop: true
     });
-
     this.tickTimer = this.time.addEvent({
       delay: 1000, callback: this.tick, callbackScope: this, loop: true
     });
@@ -69,10 +61,12 @@ class QuestCoffeeCups extends Phaser.Scene {
     this.cups.clear(true, true);
     this.add.text(this.scale.width / 2, this.scale.height / 2,
       'CAFFEINATED!\nQuest complete!', {
-      fontFamily: '"Press Start 2P"', fontSize: '16px', color: '#06d6a0',
-      align: 'center', backgroundColor: '#000', padding: { x: 16, y: 12 }
-    }).setOrigin(0.5);
+        ...THEME.text.questHeader, fontSize: '16px',
+        color: THEME.colors.mint, align: 'center',
+        backgroundColor: THEME.colors.black, padding: { x: 16, y: 12 }
+      }).setOrigin(0.5);
     GameState.quests.coffeeCups = true;
+    GameState.save();
     this.time.delayedCall(1500, () => this.scene.start('OverworldScene'));
   }
 
@@ -80,9 +74,9 @@ class QuestCoffeeCups extends Phaser.Scene {
     this.spawnTimer.remove(); this.tickTimer.remove();
     this.add.text(this.scale.width / 2, this.scale.height / 2,
       'Out of time! Try again!', {
-      fontFamily: '"Press Start 2P"', fontSize: '14px', color: '#ef476f',
-      backgroundColor: '#000', padding: { x: 16, y: 12 }
-    }).setOrigin(0.5);
+        ...THEME.text.questHeader, color: THEME.colors.red,
+        backgroundColor: THEME.colors.black, padding: { x: 16, y: 12 }
+      }).setOrigin(0.5);
     this.time.delayedCall(1500, () => this.scene.restart());
   }
 
@@ -99,10 +93,9 @@ class QuestCoffeeCups extends Phaser.Scene {
     if (this.textures.exists('coffeeCup')) return;
     const g = this.make.graphics({ x: 0, y: 0, add: false });
     g.fillStyle(0xffffff, 1); g.fillRect(3, 4, 8, 9);
-    g.fillStyle(0x6f4e37, 1); g.fillRect(4, 5, 6, 3); // coffee
-    g.fillStyle(0xffffff, 1); g.fillRect(11, 6, 2, 4); // handle
-    g.fillStyle(0xcccccc, 1); g.fillRect(2, 13, 10, 1); // saucer
-    // steam
+    g.fillStyle(0x6f4e37, 1); g.fillRect(4, 5, 6, 3);
+    g.fillStyle(0xffffff, 1); g.fillRect(11, 6, 2, 4);
+    g.fillStyle(0xcccccc, 1); g.fillRect(2, 13, 10, 1);
     g.fillStyle(0xaaaaaa, 0.7);
     g.fillRect(5, 1, 1, 2); g.fillRect(8, 1, 1, 2);
     g.generateTexture('coffeeCup', 16, 16);

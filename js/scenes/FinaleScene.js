@@ -1,46 +1,43 @@
 // FinaleScene — unlocks after all 5 quests; reveals friends' messages
-class FinaleScene extends Phaser.Scene {
+class FinaleScene extends BaseScene {
   constructor() { super('FinaleScene'); }
 
   create() {
     const { width, height } = this.scale;
     this.cameras.main.setBackgroundColor('#1a0a2e');
 
-    // Falling hearts
     this.hearts = this.add.group();
-    this.time.addEvent({
+    this.heartTimer = this.time.addEvent({
       delay: 200, loop: true, callback: () => this.spawnHeart()
     });
+    this.events.once('shutdown', () => this.heartTimer && this.heartTimer.remove());
 
     this.add.text(width / 2, 50, '♥ CONGRATULATIONS! ♥', {
-      fontFamily: '"Press Start 2P"', fontSize: '20px', color: '#ff6ec7',
-      stroke: '#fff', strokeThickness: 3
+      ...THEME.text.title, fontSize: '20px', strokeThickness: 3
     }).setOrigin(0.5);
 
     this.add.text(width / 2, 90, 'You completed every quest together.', {
-      fontFamily: '"Press Start 2P"', fontSize: '10px', color: '#ffd166'
+      ...THEME.text.body, color: THEME.colors.gold
     }).setOrigin(0.5);
 
-    this.add.text(width / 2, 115, 'Messages from those who love you:', {
-      fontFamily: '"Press Start 2P"', fontSize: '9px', color: '#fff'
-    }).setOrigin(0.5);
+    this.add.text(width / 2, 115, 'Messages from those who love you:', THEME.text.small)
+      .setOrigin(0.5);
 
-    // Hero portraits
     this.add.image(60, 60, GameState.avatars.bride || 'bride_default').setScale(3);
     this.add.image(width - 60, 60, GameState.avatars.groom || 'groom_default').setScale(3);
 
-    // Scrollable messages region
-    this.msgY = 160;
+    this.msgTopStart = 160;
+    this.msgY = this.msgTopStart;
     this.msgIndex = 0;
     this.messageTexts = [];
+    this.scrollOffset = 0;
 
     this.revealNext();
 
-    // Hint
     this.hint = this.add.text(width / 2, height - 25,
       '↑/↓ to scroll • SPACE for next message', {
-      fontFamily: '"Press Start 2P"', fontSize: '8px', color: '#fff'
-    }).setOrigin(0.5);
+        ...THEME.text.tiny
+      }).setOrigin(0.5);
 
     this.input.keyboard.on('keydown-SPACE', () => this.revealNext());
     this.input.keyboard.on('keydown-UP',   () => this.scrollMessages(40));
@@ -58,13 +55,12 @@ class FinaleScene extends Phaser.Scene {
     const y = this.msgY;
 
     const fromText = this.add.text(x, y, '— ' + m.from + ' —', {
-      fontFamily: '"Press Start 2P"', fontSize: '11px', color: m.color || '#ffd166'
+      ...THEME.text.body, fontSize: '11px', color: m.color || THEME.colors.gold
     }).setOrigin(0.5).setAlpha(0);
 
     const bodyText = this.add.text(x, y + 22, m.text, {
-      fontFamily: '"Press Start 2P"', fontSize: '9px', color: '#fff',
-      align: 'center', wordWrap: { width: this.scale.width - 100 },
-      lineSpacing: 4
+      ...THEME.text.small, align: 'center',
+      wordWrap: { width: this.scale.width - 100 }, lineSpacing: 4
     }).setOrigin(0.5, 0).setAlpha(0);
 
     this.tweens.add({ targets: [fromText, bodyText], alpha: 1, duration: 600 });
@@ -77,19 +73,29 @@ class FinaleScene extends Phaser.Scene {
     if (this.finalShown) return;
     this.finalShown = true;
     this.hint.setText('♥ THE END ♥ — Live happily ever after.');
-    this.hint.setColor('#ff6ec7');
+    this.hint.setColor(THEME.colors.pink);
   }
 
+  // Clamp scroll so messages can't fly off forever in either direction.
   scrollMessages(dy) {
-    this.messageTexts.forEach(t => { t.y += dy; });
-    this.msgY += dy;
+    const contentBottom = this.msgY;
+    const visibleBottom = this.scale.height - 60;
+    const maxUp = Math.max(0, contentBottom - visibleBottom);
+    const next = Phaser.Math.Clamp(this.scrollOffset + dy, -maxUp, 0);
+    const applied = next - this.scrollOffset;
+    if (applied === 0) return;
+    this.messageTexts.forEach(t => { t.y += applied; });
+    this.scrollOffset = next;
   }
 
   spawnHeart() {
     const x = Phaser.Math.Between(0, this.scale.width);
     const heart = this.add.text(x, -20, '♥', {
-      fontFamily: '"Press Start 2P"', fontSize: Phaser.Math.Between(10, 18) + 'px',
-      color: Phaser.Utils.Array.GetRandom(['#ff6ec7', '#ffd166', '#06d6a0', '#fff'])
+      fontFamily: THEME.font,
+      fontSize: Phaser.Math.Between(10, 18) + 'px',
+      color: Phaser.Utils.Array.GetRandom([
+        THEME.colors.pink, THEME.colors.gold, THEME.colors.mint, THEME.colors.white
+      ])
     }).setAlpha(0.5);
     this.tweens.add({
       targets: heart, y: this.scale.height + 20,

@@ -1,4 +1,4 @@
-class OverworldScene extends Phaser.Scene {
+class OverworldScene extends BaseScene {
   constructor() {
     super('OverworldScene');
   }
@@ -6,49 +6,42 @@ class OverworldScene extends Phaser.Scene {
   create() {
     const { width, height } = this.scale;
 
-    // Tiled grass background
     this.drawMap();
 
     this.add.text(width / 2, 20, 'THE QUEST MAP', {
-      fontFamily: '"Press Start 2P"',
-      fontSize: '14px',
-      color: '#fff',
-      stroke: '#000',
-      strokeThickness: 3
+      ...THEME.text.questHeader, color: THEME.colors.white,
+      stroke: THEME.colors.black, strokeThickness: 3
     }).setOrigin(0.5);
 
-    // Quest nodes
     this.questNodes = [
-      { key: 'sockMonster',  scene: 'QuestSockMonster',  x: 150, y: 200, label: 'SOCK\nMONSTER',  color: '#ef476f' },
-      { key: 'coffeeCups',   scene: 'QuestCoffeeCups',   x: 400, y: 150, label: 'COFFEE\nQUEST',   color: '#118ab2' },
-      { key: 'weddingRing',  scene: 'QuestWeddingRing',  x: 650, y: 220, label: 'WEDDING\nRING',   color: '#ffd166' },
-      { key: 'cookTogether', scene: 'QuestCookTogether', x: 250, y: 420, label: 'COOK\nTOGETHER', color: '#06d6a0' },
-      { key: 'planTrip',     scene: 'QuestPlanTrip',     x: 550, y: 420, label: 'PLAN\nA TRIP',   color: '#ff6ec7' }
+      { key: 'sockMonster',  scene: 'QuestSockMonster',  x: 150, y: 200, label: 'SOCK\nMONSTER',  color: THEME.colors.red },
+      { key: 'coffeeCups',   scene: 'QuestCoffeeCups',   x: 400, y: 150, label: 'COFFEE\nQUEST',   color: THEME.colors.blue },
+      { key: 'weddingRing',  scene: 'QuestWeddingRing',  x: 650, y: 220, label: 'WEDDING\nRING',   color: THEME.colors.gold },
+      { key: 'cookTogether', scene: 'QuestCookTogether', x: 250, y: 420, label: 'COOK\nTOGETHER', color: THEME.colors.mint },
+      { key: 'planTrip',     scene: 'QuestPlanTrip',     x: 550, y: 420, label: 'PLAN\nA TRIP',   color: THEME.colors.pink }
     ];
 
     this.questSprites = [];
     this.questNodes.forEach(q => this.makeQuestNode(q));
 
-    // Player party (bride + groom)
+    // Bride is the only physics-controlled character; groom follows visually.
     this.bride = this.physics.add.image(width / 2 - 20, height - 80,
       GameState.avatars.bride || 'bride_default').setScale(3);
-    this.groom = this.physics.add.image(width / 2 + 20, height - 80,
-      GameState.avatars.groom || 'groom_default').setScale(3);
     this.bride.body.setCollideWorldBounds(true);
-    this.groom.body.setCollideWorldBounds(true);
+    this.groom = this.add.image(width / 2 + 20, height - 80,
+      GameState.avatars.groom || 'groom_default').setScale(3);
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
+    // Cooldown to avoid re-triggering a quest the moment we return from it.
+    this.questCooldown = 600;
+
     this.hint = this.add.text(width / 2, height - 30,
       'Walk into a node to start a quest. Arrow keys to move.', {
-      fontFamily: '"Press Start 2P"',
-      fontSize: '9px',
-      color: '#fff',
-      backgroundColor: '#000',
-      padding: { x: 8, y: 4 }
-    }).setOrigin(0.5);
+        ...THEME.text.tiny, fontSize: '9px',
+        backgroundColor: THEME.colors.black, padding: { x: 8, y: 4 }
+      }).setOrigin(0.5);
 
-    // Finale unlock
     this.finaleNode = null;
     this.checkFinale();
   }
@@ -63,7 +56,6 @@ class OverworldScene extends Phaser.Scene {
         g.fillRect(x, y, tile, tile);
       }
     }
-    // path
     g.fillStyle(0x9c6644, 1);
     g.fillRect(0, this.scale.height / 2 - 8, this.scale.width, 16);
     g.fillRect(this.scale.width / 2 - 8, 0, 16, this.scale.height);
@@ -83,19 +75,13 @@ class OverworldScene extends Phaser.Scene {
 
     if (done) {
       this.add.text(q.x, q.y, '✓', {
-        fontFamily: '"Press Start 2P"',
-        fontSize: '20px',
-        color: '#06d6a0'
+        ...THEME.text.questHeader, fontSize: '20px', color: THEME.colors.mint
       }).setOrigin(0.5);
     }
 
     this.add.text(q.x, q.y + 40, q.label, {
-      fontFamily: '"Press Start 2P"',
-      fontSize: '8px',
-      color: '#fff',
-      align: 'center',
-      stroke: '#000',
-      strokeThickness: 3
+      ...THEME.text.tiny, align: 'center',
+      stroke: THEME.colors.black, strokeThickness: 3
     }).setOrigin(0.5);
 
     const zone = this.add.zone(q.x, q.y, 60, 60);
@@ -105,35 +91,29 @@ class OverworldScene extends Phaser.Scene {
   }
 
   checkFinale() {
-    if (GameState.allQuestsComplete()) {
-      const x = this.scale.width / 2;
-      const y = this.scale.height / 2;
-      const g = this.add.graphics();
-      g.fillStyle(0xff6ec7, 1);
-      g.fillCircle(x, y, 30);
-      g.lineStyle(4, 0xffd166, 1);
-      g.strokeCircle(x, y, 30);
+    if (!GameState.allQuestsComplete()) return;
+    const x = this.scale.width / 2;
+    const y = this.scale.height / 2;
+    const g = this.add.graphics();
+    g.fillStyle(0xff6ec7, 1); g.fillCircle(x, y, 30);
+    g.lineStyle(4, 0xffd166, 1); g.strokeCircle(x, y, 30);
 
-      this.add.text(x, y, '♥', {
-        fontFamily: '"Press Start 2P"',
-        fontSize: '24px',
-        color: '#fff'
-      }).setOrigin(0.5);
+    this.add.text(x, y, '♥', {
+      ...THEME.text.questHeader, fontSize: '24px', color: THEME.colors.white
+    }).setOrigin(0.5);
 
-      this.add.text(x, y + 50, 'FINALE!', {
-        fontFamily: '"Press Start 2P"',
-        fontSize: '10px',
-        color: '#ffd166',
-        stroke: '#000',
-        strokeThickness: 3
-      }).setOrigin(0.5);
+    this.add.text(x, y + 50, 'FINALE!', {
+      ...THEME.text.small, fontSize: '10px', color: THEME.colors.gold,
+      stroke: THEME.colors.black, strokeThickness: 3
+    }).setOrigin(0.5);
 
-      this.finaleNode = this.add.zone(x, y, 70, 70);
-      this.physics.add.existing(this.finaleNode, true);
-    }
+    this.finaleNode = this.add.zone(x, y, 70, 70);
+    this.physics.add.existing(this.finaleNode, true);
   }
 
-  update() {
+  update(_time, delta) {
+    if (this.questCooldown > 0) this.questCooldown -= delta;
+
     const speed = 160;
     const v = { x: 0, y: 0 };
     if (this.cursors.left.isDown)  v.x = -speed;
@@ -142,21 +122,21 @@ class OverworldScene extends Phaser.Scene {
     if (this.cursors.down.isDown)  v.y =  speed;
 
     this.bride.setVelocity(v.x, v.y);
-    this.groom.setVelocity(v.x, v.y);
-    // groom follows slightly offset
     this.groom.x = this.bride.x + 24;
     this.groom.y = this.bride.y;
 
-    // Check overlap with quest nodes
-    this.questSprites.forEach(z => {
+    if (this.questCooldown > 0) return;
+
+    for (const z of this.questSprites) {
       if (Phaser.Geom.Intersects.RectangleToRectangle(
         this.bride.getBounds(), z.getBounds()
       )) {
         if (!GameState.quests[z.questData.key]) {
           this.scene.start(z.questData.scene);
+          return;
         }
       }
-    });
+    }
 
     if (this.finaleNode &&
         Phaser.Geom.Intersects.RectangleToRectangle(

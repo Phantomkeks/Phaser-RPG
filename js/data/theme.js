@@ -1,0 +1,27 @@
+const THEME = {
+  font: '"Press Start 2P"',
+
+  colors: {
+    pink:  '#ff6ec7',
+    gold:  '#ffd166',
+    mint:  '#06d6a0',
+    red:   '#ef476f',
+    blue:  '#118ab2',
+    white: '#fff',
+    gray:  '#aaa',
+    black: '#000'
+  },
+
+  text: {
+    title:    { fontFamily: '"Press Start 2P"', fontSize: '36px', color: '#ff6ec7', stroke: '#fff', strokeThickness: 4 },
+    header:   { fontFamily: '"Press Start 2P"', fontSize: '22px', color: '#ff6ec7' },
+    subtitle: { fontFamily: '"Press Start 2P"', fontSize: '14px', color: '#ffd166' },
+    questHeader: { fontFamily: '"Press Start 2P"', fontSize: '14px' },
+    body:     { fontFamily: '"Press Start 2P"', fontSize: '10px', color: '#fff' },
+    small:    { fontFamily: '"Press Start 2P"', fontSize: '9px',  color: '#fff' },
+    tiny:     { fontFamily: '"Press Start 2P"', fontSize: '8px',  color: '#fff' },
+    hud:      { fontFamily: '"Press Start 2P"', fontSize: '12px', color: '#ffd166' },
+    button:   { fontFamily: '"Press Start 2P"', fontSize: '14px', color: '#fff', backgroundColor: '#ff6ec7', padding: { x: 14, y: 10 } },
+    buttonSm: { fontFamily: '"Press Start 2P"', fontSize: '10px', color: '#fff', backgroundColor: '#222', padding: { x: 8, y: 6 } }
+  }
+};

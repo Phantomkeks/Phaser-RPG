@@ -1,44 +1,35 @@
 // Quest 4: Cook Together — match ingredients to the recipe in order
-class QuestCookTogether extends Phaser.Scene {
+class QuestCookTogether extends BaseScene {
   constructor() { super('QuestCookTogether'); }
 
   create() {
     const { width, height } = this.scale;
     this.cameras.main.setBackgroundColor('#3a2618');
+    this.enableEscToOverworld();
 
-    this.add.text(width / 2, 30, 'QUEST 4: COOK TOGETHER', {
-      fontFamily: '"Press Start 2P"', fontSize: '14px', color: '#06d6a0'
-    }).setOrigin(0.5);
-
-    this.add.text(width / 2, 60, 'Click ingredients in the right order!', {
-      fontFamily: '"Press Start 2P"', fontSize: '9px', color: '#fff'
-    }).setOrigin(0.5);
+    this.addQuestTitle('QUEST 4: COOK TOGETHER', THEME.colors.mint);
+    this.addSubtitle('Click ingredients in the right order!', 60);
 
     this.makeTextures();
 
-    // Recipe: order matters
     this.recipe = ['tomato', 'onion', 'pasta', 'cheese', 'herb'];
     this.step = 0;
 
-    // Display recipe as a checklist
     this.recipeLabels = {};
     this.recipe.forEach((ing, i) => {
       const label = this.add.text(width / 2, 100 + i * 22,
         `${i + 1}. ${ing.toUpperCase()}`, {
-        fontFamily: '"Press Start 2P"', fontSize: '11px', color: '#fff'
-      }).setOrigin(0.5);
+          ...THEME.text.body, fontSize: '11px'
+        }).setOrigin(0.5);
+      label._baseText = label.text;
       this.recipeLabels[ing] = label;
     });
 
-    // Pot
     const pot = this.add.graphics();
     pot.fillStyle(0x4a4e69, 1);
     pot.fillRoundedRect(width / 2 - 60, height - 200, 120, 60, 8);
-    this.add.text(width / 2, height - 170, 'POT', {
-      fontFamily: '"Press Start 2P"', fontSize: '10px', color: '#fff'
-    }).setOrigin(0.5);
+    this.add.text(width / 2, height - 170, 'POT', THEME.text.body).setOrigin(0.5);
 
-    // Ingredients laid out (shuffled)
     const layout = Phaser.Utils.Array.Shuffle([...this.recipe]);
     layout.forEach((ing, i) => {
       const x = 100 + i * 130;
@@ -49,15 +40,16 @@ class QuestCookTogether extends Phaser.Scene {
     });
 
     this.feedback = this.add.text(width / 2, height - 30, '', {
-      fontFamily: '"Press Start 2P"', fontSize: '10px', color: '#ffd166'
+      ...THEME.text.body, color: THEME.colors.gold
     }).setOrigin(0.5);
   }
 
   pickIngredient(ing, sprite) {
     const expected = this.recipe[this.step];
     if (ing === expected) {
-      this.recipeLabels[ing].setColor('#06d6a0');
-      this.recipeLabels[ing].setText('✓ ' + this.recipeLabels[ing].text);
+      const label = this.recipeLabels[ing];
+      label.setColor(THEME.colors.mint);
+      label.setText('✓ ' + label._baseText);
       this.tweens.add({
         targets: sprite, y: this.scale.height - 170,
         x: this.scale.width / 2, duration: 400, ease: 'Cubic.easeIn',
@@ -73,8 +65,9 @@ class QuestCookTogether extends Phaser.Scene {
   }
 
   win() {
-    this.feedback.setText('DINNER IS SERVED! ♥').setColor('#06d6a0');
+    this.feedback.setText('DINNER IS SERVED! ♥').setColor(THEME.colors.mint);
     GameState.quests.cookTogether = true;
+    GameState.save();
     this.time.delayedCall(1500, () => this.scene.start('OverworldScene'));
   }
 
@@ -92,8 +85,7 @@ class QuestCookTogether extends Phaser.Scene {
     });
     make('onion', g => {
       g.fillStyle(0xfaf3dd, 1); g.fillRect(4, 5, 8, 9);
-      g.fillStyle(0xc8b88a, 1); g.fillRect(4, 6, 8, 1);
-      g.fillRect(4, 9, 8, 1);
+      g.fillStyle(0xc8b88a, 1); g.fillRect(4, 6, 8, 1); g.fillRect(4, 9, 8, 1);
     });
     make('pasta', g => {
       g.fillStyle(0xffd166, 1);

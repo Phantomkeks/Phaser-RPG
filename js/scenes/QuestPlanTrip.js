@@ -1,16 +1,14 @@
 // Quest 5: Plan a Trip — dialog choices that lead to a shared dream
-class QuestPlanTrip extends Phaser.Scene {
+class QuestPlanTrip extends BaseScene {
   constructor() { super('QuestPlanTrip'); }
 
   create() {
     const { width, height } = this.scale;
     this.cameras.main.setBackgroundColor('#264653');
+    this.enableEscToOverworld();
 
-    this.add.text(width / 2, 30, 'QUEST 5: PLAN A TRIP', {
-      fontFamily: '"Press Start 2P"', fontSize: '14px', color: '#ff6ec7'
-    }).setOrigin(0.5);
+    this.addQuestTitle('QUEST 5: PLAN A TRIP', THEME.colors.pink);
 
-    // Steps
     this.steps = [
       {
         prompt: 'Where to first?',
@@ -23,8 +21,8 @@ class QuestPlanTrip extends Phaser.Scene {
       {
         prompt: 'How will you travel?',
         choices: [
-          { text: 'Train',  next: 'Window seats reserved!' },
-          { text: 'Plane',  next: 'Boarding passes printed!' },
+          { text: 'Train',     next: 'Window seats reserved!' },
+          { text: 'Plane',     next: 'Boarding passes printed!' },
           { text: 'Road trip', next: 'Playlist queued!' }
         ]
       },
@@ -42,12 +40,12 @@ class QuestPlanTrip extends Phaser.Scene {
     this.path = [];
 
     this.promptText = this.add.text(width / 2, 110, '', {
-      fontFamily: '"Press Start 2P"', fontSize: '14px', color: '#fff',
+      ...THEME.text.questHeader, color: THEME.colors.white,
       align: 'center', wordWrap: { width: width - 80 }
     }).setOrigin(0.5);
 
     this.responseText = this.add.text(width / 2, 170, '', {
-      fontFamily: '"Press Start 2P"', fontSize: '10px', color: '#ffd166',
+      ...THEME.text.body, color: THEME.colors.gold,
       align: 'center', wordWrap: { width: width - 80 }
     }).setOrigin(0.5);
 
@@ -63,20 +61,17 @@ class QuestPlanTrip extends Phaser.Scene {
     this.choiceTexts = [];
 
     step.choices.forEach((c, i) => {
-      const t = this.add.text(this.scale.width / 2, 250 + i * 50,
-        `> ${c.text}`, {
-        fontFamily: '"Press Start 2P"', fontSize: '12px', color: '#fff',
-        backgroundColor: '#ff6ec7', padding: { x: 12, y: 8 }
-      }).setOrigin(0.5).setInteractive({ useHandCursor: true });
-
-      t.on('pointerover', () => t.setColor('#ffd166'));
-      t.on('pointerout',  () => t.setColor('#fff'));
-      t.on('pointerdown', () => {
-        this.path.push(c.text);
-        this.responseText.setText(c.next);
-        this.stepIndex++;
-        this.time.delayedCall(900, () => this.renderStep());
-      });
+      const t = this.addButton(this.scale.width / 2, 250 + i * 50, `> ${c.text}`,
+        () => {
+          this.path.push(c.text);
+          this.responseText.setText(c.next);
+          this.stepIndex++;
+          this.time.delayedCall(900, () => this.renderStep());
+        },
+        { ...THEME.text.button, fontSize: '12px', padding: { x: 12, y: 8 } }
+      );
+      t.on('pointerover', () => t.setColor(THEME.colors.gold));
+      t.on('pointerout',  () => t.setColor(THEME.colors.white));
       this.choiceTexts.push(t);
     });
   }
@@ -88,10 +83,11 @@ class QuestPlanTrip extends Phaser.Scene {
 
     this.add.text(this.scale.width / 2, this.scale.height - 80,
       '♥ Together, anywhere ♥', {
-      fontFamily: '"Press Start 2P"', fontSize: '12px', color: '#ff6ec7'
-    }).setOrigin(0.5);
+        ...THEME.text.hud, color: THEME.colors.pink
+      }).setOrigin(0.5);
 
     GameState.quests.planTrip = true;
+    GameState.save();
     this.time.delayedCall(2000, () => this.scene.start('OverworldScene'));
   }
 }

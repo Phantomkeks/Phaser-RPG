@@ -53,7 +53,7 @@ npx serve .
 
 Then open <http://localhost:8000>.
 
-> Note: `package.json` lists `phaser` as a dependency, but `index.html` currently loads Phaser **3.80.1** from a CDN — no `npm install` is required to run the game.
+> Note: `package.json` lists `phaser` as a dependency, but `index.html` currently loads Phaser **3.90.0** from a CDN — no `npm install` is required to run the game.
 
 ## Tech
 
