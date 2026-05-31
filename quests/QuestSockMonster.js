@@ -6,34 +6,36 @@ class QuestSockMonster extends BaseScene {
 
   create() {
     const { width, height } = this.scale;
+    const sy = height / 600;
+    const s = Math.min(width / 800, sy);
     this.cameras.main.setBackgroundColor("#3d2c4a");
     this.enableEscToOverworld();
 
     this.addQuestTitle("QUEST 1: THE SOCK MONSTER", THEME.colors.red);
-    this.addSubtitle("Defeat the laundry beast!", 75);
+    this.addSubtitle("Defeat the laundry beast!", 75 * sy);
 
     // Spacing tuned so 16x16 sprites at scale 4 (64px wide) don't overlap.
-    this.add.image(width * 0.22, height * 0.7, GameState.avatars.bride || "bride_default").setScale(4);
-    this.add.image(width * 0.35, height * 0.7, GameState.avatars.groom || "groom_default").setScale(4);
+    this.add.image(width * 0.22, height * 0.7, GameState.avatars.bride || "bride_default").setScale(4 * s);
+    this.add.image(width * 0.35, height * 0.7, GameState.avatars.groom || "groom_default").setScale(4 * s);
 
     this.makeSockMonster();
-    this.monster = this.add.image(width * 0.7, height * 0.4, "sockMonster").setScale(5);
+    this.monster = this.add.image(width * 0.7, height * 0.4, "sockMonster").setScale(5 * s);
 
     this.monsterHP = 5;
     this.hpText = this.add
-      .text(width * 0.7, height * 0.4 - 80, `HP: ${this.monsterHP}`, {
+      .text(width * 0.7, height * 0.4 - 80 * sy, `HP: ${this.monsterHP}`, {
         ...THEME.text.hud,
         color: THEME.colors.red,
       })
       .setOrigin(0.5);
 
-    this.attackBtn = this.addButton(width / 2, height - 80, "[ TOSS A SOCK! ]", () => this.attack(), {
+    this.attackBtn = this.addButton(width / 2, height - 80 * sy, "[ TOSS A SOCK! ]", () => this.attack(), {
       ...THEME.text.button,
       backgroundColor: THEME.colors.red,
     });
 
     this.log = this.add
-      .text(width / 2, height - 140, "A wild sock monster appears!", {
+      .text(width / 2, height - 140 * sy, "A wild sock monster appears!", {
         ...THEME.text.small,
         color: THEME.colors.gold,
       })

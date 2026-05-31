@@ -7,11 +7,16 @@ class QuestCake extends BaseScene {
 
   create() {
     const { width, height } = this.scale;
+    const sx = width / 800;
+    const sy = height / 600;
+    const s = Math.min(sx, sy);
+    this._scale = s;
+    this._sx = sx;
     this.cameras.main.setBackgroundColor("#3b2a52");
     this.enableEscToOverworld();
 
     this.addQuestTitle("QUEST 10: RESCUE THE CAKE!", THEME.colors.pink);
-    this.addSubtitle("Catch the layers — dodge the swatters!", 60);
+    this.addSubtitle("Catch the layers — dodge the swatters!", 60 * sy);
 
     this.makeTextures();
 
@@ -22,17 +27,17 @@ class QuestCake extends BaseScene {
     this.gameOver = false;
 
     this.player = this.physics.add
-      .image(width / 2, height - 70, GameState.avatars.bride || "bride_default")
-      .setScale(3);
+      .image(width / 2, height - 70 * sy, GameState.avatars.bride || "bride_default")
+      .setScale(3 * s);
     this.player.body.setCollideWorldBounds(true);
     this.player.body.setSize(12, 12);
 
-    this.scoreText = this.add.text(20, 20, `LAYERS: 0/${this.LAYERS_TO_WIN}`, {
+    this.scoreText = this.add.text(20 * sx, 20 * sy, `LAYERS: 0/${this.LAYERS_TO_WIN}`, {
       ...THEME.text.hud,
       color: THEME.colors.gold,
     });
     this.timeText = this.add
-      .text(width - 20, 20, "TIME: " + this.timeLeft, { ...THEME.text.hud, color: THEME.colors.red })
+      .text(width - 20 * sx, 20 * sy, "TIME: " + this.timeLeft, { ...THEME.text.hud, color: THEME.colors.red })
       .setOrigin(1, 0);
 
     this.layers = this.physics.add.group();
@@ -71,21 +76,25 @@ class QuestCake extends BaseScene {
     this.dpad = this.createVirtualDPad();
 
     const hint = this.isTouchDevice() ? "Use the D-pad to run!" : "Use ◀ ▶ to run!";
-    this.statusText = this.add.text(width / 2, height - 30, hint, { ...THEME.text.tiny }).setOrigin(0.5);
+    this.statusText = this.add.text(width / 2, height - 30 * sy, hint, { ...THEME.text.tiny }).setOrigin(0.5);
   }
 
   dropLayer() {
     if (this.gameOver) return;
-    const x = Phaser.Math.Between(40, this.scale.width - 40);
-    const layer = this.layers.create(x, -16, "cakeLayer").setScale(3);
-    layer.setVelocityY(Phaser.Math.Between(140, 200));
+    const sx = this._sx || 1;
+    const s = this._scale || 1;
+    const x = Phaser.Math.Between(40 * sx, this.scale.width - 40 * sx);
+    const layer = this.layers.create(x, -16, "cakeLayer").setScale(3 * s);
+    layer.setVelocityY(Phaser.Math.Between(140, 200) * s);
   }
 
   dropSwatter() {
     if (this.gameOver) return;
-    const x = Phaser.Math.Between(40, this.scale.width - 40);
-    const swat = this.swatters.create(x, -16, "swatter").setScale(3);
-    swat.setVelocityY(Phaser.Math.Between(180, 240));
+    const sx = this._sx || 1;
+    const s = this._scale || 1;
+    const x = Phaser.Math.Between(40 * sx, this.scale.width - 40 * sx);
+    const swat = this.swatters.create(x, -16, "swatter").setScale(3 * s);
+    swat.setVelocityY(Phaser.Math.Between(180, 240) * s);
     swat.setAngularVelocity(Phaser.Math.Between(-200, 200));
   }
 
@@ -136,7 +145,7 @@ class QuestCake extends BaseScene {
 
   update() {
     if (this.gameOver) return;
-    const speed = 260;
+    const speed = 260 * (this._scale || 1);
     this.player.setVelocityX(0);
     if (this.cursors.left.isDown) this.player.setVelocityX(-speed);
     if (this.cursors.right.isDown) this.player.setVelocityX(speed);

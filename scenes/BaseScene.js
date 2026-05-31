@@ -1,18 +1,22 @@
 class BaseScene extends Phaser.Scene {
   // Adds a top-of-screen quest title in the given color.
   addQuestTitle(text, color) {
-    const { width } = this.scale;
+    const { width, height } = this.scale;
+    const sy = height / 600;
     return this.add
-      .text(width / 2, 30, text, {
+      .text(width / 2, 30 * sy, text, {
         ...THEME.text.questHeader,
         color,
       })
       .setOrigin(0.5);
   }
 
-  addSubtitle(text, y = 60, color = THEME.colors.white) {
+  addSubtitle(text, y, color = THEME.colors.white) {
+    const { width, height } = this.scale;
+    const sy = height / 600;
+    const finalY = y == null ? 60 * sy : y;
     return this.add
-      .text(this.scale.width / 2, y, text, {
+      .text(width / 2, finalY, text, {
         ...THEME.text.small,
         color,
       })
@@ -66,11 +70,12 @@ class BaseScene extends Phaser.Scene {
     const state = { direction: { x: 0, y: 0 }, buttons: [] };
     if (!this.isTouchDevice()) return state;
 
-    const { height } = this.scale;
-    const cx = 80;
-    const cy = height - 90;
-    const r = 26;
-    const gap = 4;
+    const { width, height } = this.scale;
+    // Size dpad off the smaller axis so it fits on any aspect ratio.
+    const r = Math.round(Math.min(width, height) * 0.045);
+    const gap = Math.round(r * 0.15);
+    const cx = r * 3;
+    const cy = height - r * 3.5;
     const offset = r * 2 + gap;
 
     const dirs = [
@@ -99,7 +104,7 @@ class BaseScene extends Phaser.Scene {
       const label = this.add
         .text(d.x, d.y, d.label, {
           fontFamily: "monospace",
-          fontSize: "20px",
+          fontSize: Math.round(r * 0.85) + "px",
           color: "#ffffff",
         })
         .setOrigin(0.5)

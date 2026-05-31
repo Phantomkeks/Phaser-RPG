@@ -6,6 +6,10 @@ class QuestPlanTrip extends BaseScene {
 
   create() {
     const { width, height } = this.scale;
+    const sx = width / 800;
+    const sy = height / 600;
+    this._sx = sx;
+    this._sy = sy;
     this.cameras.main.setBackgroundColor("#264653");
     this.enableEscToOverworld();
 
@@ -42,20 +46,20 @@ class QuestPlanTrip extends BaseScene {
     this.path = [];
 
     this.promptText = this.add
-      .text(width / 2, 110, "", {
+      .text(width / 2, 110 * sy, "", {
         ...THEME.text.questHeader,
         color: THEME.colors.white,
         align: "center",
-        wordWrap: { width: width - 80 },
+        wordWrap: { width: width - 80 * sx },
       })
       .setOrigin(0.5);
 
     this.responseText = this.add
-      .text(width / 2, 170, "", {
+      .text(width / 2, 170 * sy, "", {
         ...THEME.text.body,
         color: THEME.colors.gold,
         align: "center",
-        wordWrap: { width: width - 80 },
+        wordWrap: { width: width - 80 * sx },
       })
       .setOrigin(0.5);
 
@@ -73,7 +77,7 @@ class QuestPlanTrip extends BaseScene {
     step.choices.forEach((c, i) => {
       const t = this.addButton(
         this.scale.width / 2,
-        250 + i * 50,
+        (250 + i * 50) * (this._sy || 1),
         `> ${c.text}`,
         () => {
           this.path.push(c.text);
@@ -95,7 +99,7 @@ class QuestPlanTrip extends BaseScene {
     this.responseText.setText(this.path.join(" • "));
 
     this.add
-      .text(this.scale.width / 2, this.scale.height - 80, "♥ Together, anywhere ♥", {
+      .text(this.scale.width / 2, this.scale.height - 80 * (this._sy || 1), "♥ Together, anywhere ♥", {
         ...THEME.text.hud,
         color: THEME.colors.pink,
       })

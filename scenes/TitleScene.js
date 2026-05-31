@@ -5,12 +5,13 @@ class TitleScene extends BaseScene {
 
   create() {
     const { width, height } = this.scale;
+    const sy = height / 600;
 
     this.drawPixelHearts();
 
     this.add.text(width / 2, height / 3, "MARRIAGE QUEST", THEME.text.title).setOrigin(0.5);
 
-    this.add.text(width / 2, height / 3 + 60, "A Wedding Adventure", THEME.text.subtitle).setOrigin(0.5);
+    this.add.text(width / 2, height / 3 + 60 * sy, "A Wedding Adventure", THEME.text.subtitle).setOrigin(0.5);
 
     const startBtn = this.addButton(width / 2, height * 0.65, "> PRESS START <", () => this.scene.start("IntroScene"), {
       ...THEME.text.button,
@@ -27,7 +28,7 @@ class TitleScene extends BaseScene {
     });
 
     this.add
-      .text(width / 2, height - 30, "Two hearts. Ten quests. One forever.", {
+      .text(width / 2, height - 30 * sy, "Two hearts. Ten quests. One forever.", {
         ...THEME.text.small,
         fontSize: "10px",
         color: THEME.colors.gray,

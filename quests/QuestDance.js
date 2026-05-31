@@ -7,6 +7,9 @@ class QuestDance extends BaseScene {
 
   create() {
     const { width, height } = this.scale;
+    const sx = width / 800;
+    const sy = height / 600;
+    const s = Math.min(sx, sy);
     this.cameras.main.setBackgroundColor("#1f1147");
     this.enableEscToOverworld();
 
@@ -14,12 +17,12 @@ class QuestDance extends BaseScene {
     const hint = this.isTouchDevice()
       ? "Repeat the steps. Tap the arrows below."
       : "Repeat the steps. Use the arrow keys.";
-    this.addSubtitle(hint, 60);
+    this.addSubtitle(hint, 60 * sy);
 
     // Avatars side by side, centered.
     const groundY = height * 0.55;
-    this.bride = this.add.image(width / 2 - 50, groundY, GameState.avatars.bride || "bride_default").setScale(4);
-    this.groom = this.add.image(width / 2 + 50, groundY, GameState.avatars.groom || "groom_default").setScale(4);
+    this.bride = this.add.image(width / 2 - 50 * sx, groundY, GameState.avatars.bride || "bride_default").setScale(4 * s);
+    this.groom = this.add.image(width / 2 + 50 * sx, groundY, GameState.avatars.groom || "groom_default").setScale(4 * s);
 
     // Arrow display row.
     this.arrowRow = this.add
@@ -32,7 +35,7 @@ class QuestDance extends BaseScene {
       .setOrigin(0.5);
 
     this.statusText = this.add
-      .text(width / 2, height - 60, "", {
+      .text(width / 2, height - 60 * sy, "", {
         ...THEME.text.body,
         color: THEME.colors.white,
       })
@@ -59,9 +62,10 @@ class QuestDance extends BaseScene {
 
   addTapArrows() {
     const { width, height } = this.scale;
+    const s = Math.min(width / 800, height / 600);
     const cx = width / 2;
-    const cy = height - 30;
-    const r = 22;
+    const cy = height - 30 * (height / 600);
+    const r = Math.round(22 * s);
     const offset = r * 2 + 6;
     const layout = [
       { dir: "L", label: "◀", x: cx - offset * 1.5, y: cy },

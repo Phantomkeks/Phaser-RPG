@@ -5,21 +5,24 @@ class AvatarScene extends BaseScene {
 
   create() {
     const { width, height } = this.scale;
+    const sx = width / 800;
+    const sy = height / 600;
+    const s = Math.min(sx, sy);
     this._inputs = [];
 
-    this.add.text(width / 2, 50, "CREATE YOUR HEROES", THEME.text.header).setOrigin(0.5);
+    this.add.text(width / 2, 50 * sy, "CREATE YOUR HEROES", THEME.text.header).setOrigin(0.5);
 
     this.add
-      .text(width / 2, 90, "Upload photos — we will pixelate them!", {
+      .text(width / 2, 90 * sy, "Upload photos — we will pixelate them!", {
         ...THEME.text.small,
         fontSize: "10px",
       })
       .setOrigin(0.5);
 
-    this.createSlot("bride", "BRIDE", width * 0.28, height * 0.5, THEME.colors.pink);
-    this.createSlot("groom", "GROOM", width * 0.72, height * 0.5, THEME.colors.mint);
+    this.createSlot("bride", "BRIDE", width * 0.28, height * 0.5, THEME.colors.pink, s);
+    this.createSlot("groom", "GROOM", width * 0.72, height * 0.5, THEME.colors.mint, s);
 
-    this.addButton(width / 2, height - 60, "> SKIP / CONTINUE >", () => this.scene.start("OverworldScene"), {
+    this.addButton(width / 2, height - 60 * sy, "> SKIP / CONTINUE >", () => this.scene.start("OverworldScene"), {
       ...THEME.text.button,
       backgroundColor: "#444",
     });
@@ -28,25 +31,27 @@ class AvatarScene extends BaseScene {
     this.events.once("destroy", () => this.cleanupInputs());
   }
 
-  createSlot(role, label, x, y, color) {
+  createSlot(role, label, x, y, color, s = 1) {
     const colorInt = Phaser.Display.Color.HexStringToColor(color).color;
+    const frameSize = 160 * s;
+    const half = frameSize / 2;
 
     const frame = this.add.graphics();
     frame.lineStyle(4, colorInt, 1);
-    frame.strokeRect(x - 80, y - 80, 160, 160);
+    frame.strokeRect(x - half, y - half, frameSize, frameSize);
 
     this.makePlaceholder(role + "_default", color);
-    const sprite = this.add.image(x, y, role + "_default").setScale(4);
+    const sprite = this.add.image(x, y, role + "_default").setScale(4 * s);
     GameState.avatars[role] = role + "_default";
 
     this.add
-      .text(x, y + 100, label, {
+      .text(x, y + 100 * s, label, {
         ...THEME.text.subtitle,
         color,
       })
       .setOrigin(0.5);
 
-    const uploadBtn = this.addButton(x, y + 130, "[ UPLOAD PHOTO ]", () => input.click(), THEME.text.buttonSm);
+    const uploadBtn = this.addButton(x, y + 130 * s, "[ UPLOAD PHOTO ]", () => input.click(), THEME.text.buttonSm);
 
     const input = document.createElement("input");
     input.type = "file";

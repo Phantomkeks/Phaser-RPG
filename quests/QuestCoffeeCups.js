@@ -6,25 +6,28 @@ class QuestCoffeeCups extends BaseScene {
 
   create() {
     const { width, height } = this.scale;
+    const sx = width / 800;
+    const sy = height / 600;
+    const s = Math.min(sx, sy);
     this.cameras.main.setBackgroundColor("#2d2d2d");
     this.enableEscToOverworld();
 
     this.addQuestTitle("QUEST 2: OFFICE COFFEE RUN", THEME.colors.blue);
-    this.addSubtitle("Collect 10 coffee cups!", 60);
+    this.addSubtitle("Collect 10 coffee cups!", 60 * sy);
 
     this.makeCupTexture();
 
     this.player = this.physics.add
-      .image(width / 2, height - 100, GameState.avatars.bride || "bride_default")
-      .setScale(3);
+      .image(width / 2, height - 100 * sy, GameState.avatars.bride || "bride_default")
+      .setScale(3 * s);
     this.player.body.setCollideWorldBounds(true);
 
     this.collected = 0;
     this.timeLeft = 30;
 
-    this.scoreText = this.add.text(20, 20, "CUPS: 0/10", THEME.text.hud);
+    this.scoreText = this.add.text(20 * sx, 20 * sy, "CUPS: 0/10", THEME.text.hud);
     this.timeText = this.add
-      .text(width - 20, 20, "TIME: 30", {
+      .text(width - 20 * sx, 20 * sy, "TIME: 30", {
         ...THEME.text.hud,
         color: THEME.colors.red,
       })
@@ -54,12 +57,15 @@ class QuestCoffeeCups extends BaseScene {
 
     this.cursors = this.input.keyboard.createCursorKeys();
     this.dpad = this.createVirtualDPad();
+    this._scale = s;
   }
 
   spawnCup() {
-    const x = Phaser.Math.Between(40, this.scale.width - 40);
-    const y = Phaser.Math.Between(100, this.scale.height - 50);
-    const cup = this.cups.create(x, y, "coffeeCup").setScale(3);
+    const sx = this.scale.width / 800;
+    const sy = this.scale.height / 600;
+    const x = Phaser.Math.Between(40 * sx, this.scale.width - 40 * sx);
+    const y = Phaser.Math.Between(100 * sy, this.scale.height - 50 * sy);
+    const cup = this.cups.create(x, y, "coffeeCup").setScale(3 * Math.min(sx, sy));
     this.tweens.add({ targets: cup, y: y - 6, yoyo: true, repeat: -1, duration: 600 });
   }
 
@@ -103,7 +109,7 @@ class QuestCoffeeCups extends BaseScene {
   }
 
   update() {
-    const speed = 220;
+    const speed = 220 * (this._scale || 1);
     this.player.setVelocity(0);
     if (this.cursors.left.isDown) this.player.setVelocityX(-speed);
     if (this.cursors.right.isDown) this.player.setVelocityX(speed);

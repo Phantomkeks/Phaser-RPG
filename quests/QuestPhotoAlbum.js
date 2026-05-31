@@ -7,11 +7,14 @@ class QuestPhotoAlbum extends BaseScene {
 
   create() {
     const { width, height } = this.scale;
+    const sx = width / 800;
+    const sy = height / 600;
+    const s = Math.min(sx, sy);
     this.cameras.main.setBackgroundColor("#3a2a18");
     this.enableEscToOverworld();
 
     this.addQuestTitle("QUEST 8: PHOTO ALBUM", THEME.colors.blue);
-    this.addSubtitle("Match the memories. Click two cards at a time.", 60);
+    this.addSubtitle("Match the memories. Click two cards at a time.", 60 * sy);
 
     this.makeTextures();
 
@@ -33,10 +36,10 @@ class QuestPhotoAlbum extends BaseScene {
     this.locked = false;
 
     const cols = 4;
-    const cellW = 110;
-    const cellH = 100;
+    const cellW = 110 * sx;
+    const cellH = 100 * sy;
     const startX = (width - (cols - 1) * cellW) / 2;
-    const startY = 130;
+    const startY = 130 * sy;
 
     deck.forEach((key, i) => {
       const col = i % cols;
@@ -44,7 +47,7 @@ class QuestPhotoAlbum extends BaseScene {
       const x = startX + col * cellW;
       const y = startY + row * cellH;
 
-      const card = this.add.image(x, y, "card_back").setScale(4).setInteractive({ useHandCursor: true });
+      const card = this.add.image(x, y, "card_back").setScale(4 * s).setInteractive({ useHandCursor: true });
       card.memoryKey = key;
       card.faceUp = false;
       card.matched = false;
@@ -53,17 +56,17 @@ class QuestPhotoAlbum extends BaseScene {
     });
 
     this.statusText = this.add
-      .text(width / 2, height - 40, "", {
+      .text(width / 2, height - 40 * sy, "", {
         ...THEME.text.body,
         color: THEME.colors.gold,
       })
       .setOrigin(0.5);
 
     this.captionText = this.add
-      .text(width / 2, height - 75, "", {
+      .text(width / 2, height - 75 * sy, "", {
         ...THEME.text.small,
         color: THEME.colors.white,
-        wordWrap: { width: width - 80 },
+        wordWrap: { width: width - 80 * sx },
         align: "center",
       })
       .setOrigin(0.5);

@@ -7,11 +7,15 @@ class QuestVows extends BaseScene {
 
   create() {
     const { width, height } = this.scale;
+    const sx = width / 800;
+    const sy = height / 600;
+    this._sx = sx;
+    this._sy = sy;
     this.cameras.main.setBackgroundColor("#2b1d3a");
     this.enableEscToOverworld();
 
     this.addQuestTitle("QUEST 6: WRITE YOUR VOWS", THEME.colors.gold);
-    this.addSubtitle("Pick the words from your heart.", 60);
+    this.addSubtitle("Pick the words from your heart.", 60 * sy);
 
     // Each blank: leading text, three choices, trailing text for the next blank's lead-in.
     this.blanks = [
@@ -26,11 +30,11 @@ class QuestVows extends BaseScene {
     this.parts = [];
 
     this.scrollText = this.add
-      .text(width / 2, 130, "", {
+      .text(width / 2, 130 * sy, "", {
         ...THEME.text.body,
         color: THEME.colors.white,
         align: "center",
-        wordWrap: { width: width - 100 },
+        wordWrap: { width: width - 100 * sx },
         lineSpacing: 6,
       })
       .setOrigin(0.5, 0);
@@ -64,7 +68,7 @@ class QuestVows extends BaseScene {
     step.choices.forEach((choice, i) => {
       const t = this.addButton(
         this.scale.width / 2,
-        320 + i * 50,
+        (320 + i * 50) * (this._sy || 1),
         `> ${choice}`,
         () => {
           this.parts.push(choice);
@@ -100,7 +104,7 @@ class QuestVows extends BaseScene {
     });
 
     this.add
-      .text(this.scale.width / 2, this.scale.height - 70, "♥ Sealed with a kiss ♥", {
+      .text(this.scale.width / 2, this.scale.height - 70 * (this._sy || 1), "♥ Sealed with a kiss ♥", {
         ...THEME.text.hud,
         color: THEME.colors.pink,
       })

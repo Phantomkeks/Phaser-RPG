@@ -5,11 +5,16 @@ class OverworldScene extends BaseScene {
 
   create() {
     const { width, height } = this.scale;
+    // Layout was originally tuned for 800x600. Scale every coord by these
+    // factors so the map adapts to whatever canvas size main.js declares.
+    const sx = width / 800;
+    const sy = height / 600;
+    const s = Math.min(sx, sy);
 
     this.drawMap();
 
     this.add
-      .text(width / 2, 20, "THE QUEST MAP", {
+      .text(width / 2, 20 * sy, "THE QUEST MAP", {
         ...THEME.text.questHeader,
         color: THEME.colors.white,
         stroke: THEME.colors.black,
@@ -18,114 +23,36 @@ class OverworldScene extends BaseScene {
       .setOrigin(0.5);
 
     // 10 quest nodes laid out on a rough 5x2 grid; finale unlocks in the dead center.
+    // Coordinates are expressed in the original 800x600 design space and scaled
+    // at runtime via sx/sy.
     this.questNodes = [
       // Top row
-      {
-        key: "sockMonster",
-        scene: "QuestSockMonster",
-        x: 100,
-        y: 130,
-        label: "SOCK\nMONSTER",
-        color: THEME.colors.red,
-        icon: "sock",
-      },
-      {
-        key: "coffeeCups",
-        scene: "QuestCoffeeCups",
-        x: 260,
-        y: 110,
-        label: "COFFEE\nQUEST",
-        color: THEME.colors.gold,
-        icon: "coffee",
-      },
-      {
-        key: "weddingRing",
-        scene: "QuestWeddingRing",
-        x: 420,
-        y: 130,
-        label: "WEDDING\nRING",
-        color: THEME.colors.green,
-        icon: "ring",
-      },
-      {
-        key: "photoAlbum",
-        scene: "QuestPhotoAlbum",
-        x: 580,
-        y: 110,
-        label: "PHOTO\nALBUM",
-        color: THEME.colors.blue,
-        icon: "camera",
-      },
-      {
-        key: "vows",
-        scene: "QuestVows",
-        x: 720,
-        y: 130,
-        label: "WRITE\nVOWS",
-        color: THEME.colors.lavender,
-        icon: "scroll",
-      },
+      { key: "sockMonster",  scene: "QuestSockMonster",  x: 100 * sx, y: 130 * sy, label: "SOCK\nMONSTER",   color: THEME.colors.red,      icon: "sock" },
+      { key: "coffeeCups",   scene: "QuestCoffeeCups",   x: 260 * sx, y: 110 * sy, label: "COFFEE\nQUEST",    color: THEME.colors.gold,     icon: "coffee" },
+      { key: "weddingRing",  scene: "QuestWeddingRing",  x: 420 * sx, y: 130 * sy, label: "WEDDING\nRING",    color: THEME.colors.green,    icon: "ring" },
+      { key: "photoAlbum",   scene: "QuestPhotoAlbum",   x: 580 * sx, y: 110 * sy, label: "PHOTO\nALBUM",     color: THEME.colors.blue,     icon: "camera" },
+      { key: "vows",         scene: "QuestVows",         x: 720 * sx, y: 130 * sy, label: "WRITE\nVOWS",      color: THEME.colors.lavender, icon: "scroll" },
       // Bottom row
-      {
-        key: "cookTogether",
-        scene: "QuestCookTogether",
-        x: 100,
-        y: 420,
-        label: "COOK\nTOGETHER",
-        color: THEME.colors.coral,
-        icon: "pan",
-      },
-      {
-        key: "garden",
-        scene: "QuestGarden",
-        x: 260,
-        y: 440,
-        label: "GARDEN",
-        color: THEME.colors.lime,
-        icon: "flower",
-      },
-      {
-        key: "dance",
-        scene: "QuestDance",
-        x: 420,
-        y: 420,
-        label: "DANCE\nTOGETHER",
-        color: THEME.colors.purple,
-        icon: "note",
-      },
-      {
-        key: "cake",
-        scene: "QuestCake",
-        x: 580,
-        y: 440,
-        label: "RESCUE\nTHE CAKE",
-        color: THEME.colors.pink,
-        icon: "cake",
-      },
-      {
-        key: "planTrip",
-        scene: "QuestPlanTrip",
-        x: 720,
-        y: 420,
-        label: "PLAN\nA TRIP",
-        color: THEME.colors.teal,
-        icon: "suitcase",
-      },
+      { key: "cookTogether", scene: "QuestCookTogether", x: 100 * sx, y: 420 * sy, label: "COOK\nTOGETHER",   color: THEME.colors.coral,    icon: "pan" },
+      { key: "garden",       scene: "QuestGarden",       x: 260 * sx, y: 440 * sy, label: "GARDEN",           color: THEME.colors.lime,     icon: "flower" },
+      { key: "dance",        scene: "QuestDance",        x: 420 * sx, y: 420 * sy, label: "DANCE\nTOGETHER",  color: THEME.colors.purple,   icon: "note" },
+      { key: "cake",         scene: "QuestCake",         x: 580 * sx, y: 440 * sy, label: "RESCUE\nTHE CAKE", color: THEME.colors.pink,     icon: "cake" },
+      { key: "planTrip",     scene: "QuestPlanTrip",     x: 720 * sx, y: 420 * sy, label: "PLAN\nA TRIP",     color: THEME.colors.teal,     icon: "suitcase" },
     ];
 
     this.questSprites = [];
     this.questNodes.forEach((q) => this.makeQuestNode(q));
 
     // Bride is the only physics-controlled character; groom follows visually.
-    // Spacing tuned so 16x16 sprites at scale 3 (48px wide) don't overlap.
-    this.partyOffsetX = 50;
+    this.partyOffsetX = 50 * s;
+    const partyScale = 3 * s;
     this.bride = this.physics.add
-      .image(width / 2 - this.partyOffsetX / 2, height - 80, GameState.avatars.bride || "bride_default")
-      .setScale(3);
+      .image(width / 2 - this.partyOffsetX / 2, height - 80 * sy, GameState.avatars.bride || "bride_default")
+      .setScale(partyScale);
     this.bride.body.setCollideWorldBounds(true);
     this.groom = this.add
-      .image(width / 2 + this.partyOffsetX / 2, height - 80, GameState.avatars.groom || "groom_default")
-      .setScale(3);
+      .image(width / 2 + this.partyOffsetX / 2, height - 80 * sy, GameState.avatars.groom || "groom_default")
+      .setScale(partyScale);
 
     this.cursors = this.input.keyboard.createCursorKeys();
     this.dpad = this.createVirtualDPad();
@@ -137,7 +64,7 @@ class OverworldScene extends BaseScene {
       ? "Walk into a node to start a quest. Use the D-pad to move."
       : "Walk into a node to start a quest. Arrow keys to move.";
     this.hint = this.add
-      .text(width / 2, height - 30, hintText, {
+      .text(width / 2, height - 30 * sy, hintText, {
         ...THEME.text.tiny,
         fontSize: "9px",
         color: "#fff3b0",
@@ -153,6 +80,8 @@ class OverworldScene extends BaseScene {
   drawMap() {
     const w = this.scale.width;
     const h = this.scale.height;
+    const sx = w / 800;
+    const sy = h / 600;
 
     // Parchment base — warm cream with vertical streaks for an aged-paper feel.
     const g = this.add.graphics();
@@ -172,9 +101,9 @@ class OverworldScene extends BaseScene {
 
     // Coffee-stain blotches for character.
     for (let i = 0; i < 5; i++) {
-      const cx = rand.between(60, w - 60);
-      const cy = rand.between(60, h - 60);
-      const r = rand.between(20, 40);
+      const cx = rand.between(60 * sx, w - 60 * sx);
+      const cy = rand.between(60 * sy, h - 60 * sy);
+      const r = rand.between(20 * sx, 40 * sx);
       g.fillStyle(0xb8945a, 0.18);
       g.fillCircle(cx, cy, r);
       g.fillStyle(0x8b6f3d, 0.12);
@@ -184,22 +113,25 @@ class OverworldScene extends BaseScene {
     // Torn-edge frame: dark inner border with rough corner notches.
     const frame = this.add.graphics();
     const ink = 0x4a2c2a;
+    const fo = 12 * Math.min(sx, sy); // frame outer margin
+    const fi = 18 * Math.min(sx, sy); // frame inner margin
     frame.lineStyle(3, ink, 0.85);
-    frame.strokeRect(12, 12, w - 24, h - 24);
+    frame.strokeRect(fo, fo, w - fo * 2, h - fo * 2);
     frame.lineStyle(1, ink, 0.5);
-    frame.strokeRect(18, 18, w - 36, h - 36);
+    frame.strokeRect(fi, fi, w - fi * 2, h - fi * 2);
     // Corner flourishes
+    const flourish = 14 * Math.min(sx, sy);
     [
-      [18, 18, 1, 1],
-      [w - 18, 18, -1, 1],
-      [18, h - 18, 1, -1],
-      [w - 18, h - 18, -1, -1],
+      [fi, fi, 1, 1],
+      [w - fi, fi, -1, 1],
+      [fi, h - fi, 1, -1],
+      [w - fi, h - fi, -1, -1],
     ].forEach(([cx, cy, dx, dy]) => {
       frame.lineStyle(2, ink, 0.9);
       frame.beginPath();
-      frame.moveTo(cx + 14 * dx, cy);
+      frame.moveTo(cx + flourish * dx, cy);
       frame.lineTo(cx, cy);
-      frame.lineTo(cx, cy + 14 * dy);
+      frame.lineTo(cx, cy + flourish * dy);
       frame.strokePath();
     });
 
@@ -208,7 +140,7 @@ class OverworldScene extends BaseScene {
     const order = [
       [100, 130], [260, 110], [420, 130], [580, 110], [720, 130],
       [720, 420], [580, 440], [420, 420], [260, 440], [100, 420],
-    ];
+    ].map(([x, y]) => [x * sx, y * sy]);
     this.drawDottedPath(order, ink);
 
     // Tiny pixel illustrations between/around nodes — tucked into the gaps so
@@ -235,11 +167,11 @@ class OverworldScene extends BaseScene {
       { type: "compass", x: 60, y: 540 },
       { type: "scroll", x: 740, y: 540 },
     ];
-    illustrations.forEach((d) => this.drawDecoration(d));
+    illustrations.forEach((d) => this.drawDecoration({ type: d.type, x: d.x * sx, y: d.y * sy }));
 
     // "X marks the spot" in the very center where the finale unlocks.
     this.add
-      .text(w / 2, h / 2 - 80, "✦  HERE WAITS FOREVER  ✦", {
+      .text(w / 2, h / 2 - 80 * sy, "✦  HERE WAITS FOREVER  ✦", {
         fontFamily: '"Press Start 2P"',
         fontSize: "8px",
         color: "#4a2c2a",
@@ -309,9 +241,10 @@ class OverworldScene extends BaseScene {
   makeQuestNode(q) {
     const done = GameState.quests[q.key];
     const colorInt = Phaser.Display.Color.HexStringToColor(q.color).color;
+    const s = Math.min(this.scale.width / 800, this.scale.height / 600);
 
     // Container so we can pulse the whole node (ring + icon) together.
-    const container = this.add.container(q.x, q.y);
+    const container = this.add.container(q.x, q.y).setScale(s);
 
     if (!done) {
       const glow = this.add.graphics();
@@ -342,7 +275,7 @@ class OverworldScene extends BaseScene {
 
       this.tweens.add({
         targets: container,
-        scale: { from: 1, to: 1.08 },
+        scale: { from: s, to: s * 1.08 },
         duration: 700,
         yoyo: true,
         repeat: -1,
@@ -351,7 +284,7 @@ class OverworldScene extends BaseScene {
     }
 
     this.add
-      .text(q.x, q.y + 40, q.label, {
+      .text(q.x, q.y + 40 * s, q.label, {
         ...THEME.text.tiny,
         align: "center",
         stroke: THEME.colors.black,
@@ -359,7 +292,7 @@ class OverworldScene extends BaseScene {
       })
       .setOrigin(0.5);
 
-    const zone = this.add.zone(q.x, q.y, 60, 60);
+    const zone = this.add.zone(q.x, q.y, 60 * s, 60 * s);
     this.physics.add.existing(zone, true);
     zone.questData = q;
     this.questSprites.push(zone);
@@ -700,8 +633,9 @@ class OverworldScene extends BaseScene {
     if (!GameState.allQuestsComplete()) return;
     const x = this.scale.width / 2;
     const y = this.scale.height / 2;
+    const s = Math.min(this.scale.width / 800, this.scale.height / 600);
 
-    const finaleContainer = this.add.container(x, y);
+    const finaleContainer = this.add.container(x, y).setScale(s);
     const glow = this.add.graphics();
     glow.fillStyle(0xff6ec7, 0.3);
     glow.fillCircle(0, 0, 44);
@@ -725,7 +659,7 @@ class OverworldScene extends BaseScene {
 
     this.tweens.add({
       targets: finaleContainer,
-      scale: { from: 1, to: 1.15 },
+      scale: { from: s, to: s * 1.15 },
       duration: 600,
       yoyo: true,
       repeat: -1,
@@ -733,7 +667,7 @@ class OverworldScene extends BaseScene {
     });
 
     this.add
-      .text(x, y + 50, "FINALE!", {
+      .text(x, y + 50 * s, "FINALE!", {
         ...THEME.text.small,
         fontSize: "10px",
         color: THEME.colors.gold,
@@ -742,14 +676,15 @@ class OverworldScene extends BaseScene {
       })
       .setOrigin(0.5);
 
-    this.finaleNode = this.add.zone(x, y, 70, 70);
+    this.finaleNode = this.add.zone(x, y, 70 * s, 70 * s);
     this.physics.add.existing(this.finaleNode, true);
   }
 
   update(_time, delta) {
     if (this.questCooldown > 0) this.questCooldown -= delta;
 
-    const speed = 160;
+    const s = Math.min(this.scale.width / 800, this.scale.height / 600);
+    const speed = 160 * s;
     const v = { x: 0, y: 0 };
     if (this.cursors.left.isDown) v.x = -speed;
     if (this.cursors.right.isDown) v.x = speed;

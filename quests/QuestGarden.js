@@ -8,25 +8,29 @@ class QuestGarden extends BaseScene {
 
   create() {
     const { width, height } = this.scale;
+    const sx = width / 800;
+    const sy = height / 600;
+    const s = Math.min(sx, sy);
     this.cameras.main.setBackgroundColor("#2d4a2b");
     this.enableEscToOverworld();
 
     this.addQuestTitle("QUEST 9: GARDEN OF MEMORIES", THEME.colors.mint);
-    this.addSubtitle("Plant the next seed. 3 same-color in a line = a heart row.", 60);
+    this.addSubtitle("Plant the next seed. 3 same-color in a line = a heart row.", 60 * sy);
 
     this.makeTextures();
 
     this.GRID = 4;
     this.HEARTS_TO_WIN = 4;
     this.QUEUE_SIZE = 3;
-    this.cell = 70;
+    this.cell = 70 * s;
+    this._scale = s;
 
     this.flowerColors = ["pink", "gold", "mint", "red"];
 
     // Center grid horizontally, leaving room on the right for the seed bag.
     const gridW = (this.GRID - 1) * this.cell;
-    this.startX = (width - gridW) / 2 - 60;
-    this.startY = 130;
+    this.startX = (width - gridW) / 2 - 60 * sx;
+    this.startY = 130 * sy;
 
     this.tiles = [];
     this.heartsBloomed = 0;
@@ -36,7 +40,7 @@ class QuestGarden extends BaseScene {
       for (let c = 0; c < this.GRID; c++) {
         const x = this.startX + c * this.cell;
         const y = this.startY + r * this.cell;
-        const sprite = this.add.image(x, y, "soil").setScale(4).setInteractive({ useHandCursor: true });
+        const sprite = this.add.image(x, y, "soil").setScale(4 * s).setInteractive({ useHandCursor: true });
         sprite.on("pointerdown", () => this.plant(r, c));
         this.tiles[r][c] = { sprite, color: null, sprouting: false, locked: false };
       }
@@ -48,16 +52,17 @@ class QuestGarden extends BaseScene {
     this.renderQueue();
 
     this.statusText = this.add
-      .text(width / 2, height - 60, "Plant the front seed. Plan ahead!", {
+      .text(width / 2, height - 60 * sy, "Plant the front seed. Plan ahead!", {
         ...THEME.text.body,
         color: THEME.colors.gold,
       })
       .setOrigin(0.5);
 
-    this.heartsText = this.add.text(20, 20, "HEARTS: 0/" + this.HEARTS_TO_WIN, {
-      ...THEME.text.hud,
-      color: THEME.colors.pink,
-    });
+    this.heartsText = this.add
+      .text(20 * sx, 100 * sy, "HEARTS: 0/" + this.HEARTS_TO_WIN, {
+        ...THEME.text.hud,
+        color: THEME.colors.pink,
+      });
   }
 
   randomColor() {
@@ -66,36 +71,39 @@ class QuestGarden extends BaseScene {
 
   buildSeedBag() {
     const { width } = this.scale;
-    const bagX = width - 110;
+    const sx = this._sx || width / 800;
+    const s = this._scale || 1;
+    const bagX = width - 110 * sx;
     const bagY = this.startY;
 
     this.add
-      .text(bagX, bagY - 40, "SEED BAG", {
+      .text(bagX, bagY - 40 * s, "SEED BAG", {
         ...THEME.text.body,
         color: THEME.colors.gold,
       })
       .setOrigin(0.5);
 
-    this.add.text(bagX, bagY - 20, "NEXT ↓", THEME.text.tiny).setOrigin(0.5);
+    this.add.text(bagX, bagY - 20 * s, "NEXT ↓", THEME.text.tiny).setOrigin(0.5);
 
     // Three queue slots stacked vertically; index 0 is "next to plant".
     this.queueSprites = [];
     for (let i = 0; i < this.QUEUE_SIZE; i++) {
-      const y = bagY + i * 60;
-      const slot = this.add.image(bagX, y, "soil").setScale(3).setAlpha(0.4);
-      const seed = this.add.image(bagX, y, "flower_pink").setScale(3);
+      const y = bagY + i * 60 * s;
+      const slot = this.add.image(bagX, y, "soil").setScale(3 * s).setAlpha(0.4);
+      const seed = this.add.image(bagX, y, "flower_pink").setScale(3 * s);
       this.queueSprites.push({ slot, seed });
     }
   }
 
   renderQueue() {
-    this.queueSprites.forEach((s, i) => {
+    const s = this._scale || 1;
+    this.queueSprites.forEach((sp, i) => {
       const color = this.queue[i];
-      s.seed.setTexture("flower_" + color);
+      sp.seed.setTexture("flower_" + color);
       // Highlight the next seed; dim the others.
       const isNext = i === 0;
-      s.seed.setScale(isNext ? 4 : 3);
-      s.seed.setAlpha(isNext ? 1 : 0.6);
+      sp.seed.setScale((isNext ? 4 : 3) * s);
+      sp.seed.setAlpha(isNext ? 1 : 0.6);
     });
   }
 
@@ -160,7 +168,7 @@ class QuestGarden extends BaseScene {
     line.forEach((t, i) => {
       this.tweens.add({
         targets: t.sprite,
-        scale: 5,
+        scale: 5 * (this._scale || 1),
         duration: 200,
         yoyo: true,
         delay: i * 80,

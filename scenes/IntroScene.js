@@ -5,6 +5,8 @@ class IntroScene extends BaseScene {
 
   create() {
     const { width, height } = this.scale;
+    const sx = width / 800;
+    const sy = height / 600;
 
     this.pages = [
       "Once upon a pixel, in a kingdom of\nshared coffee mugs and tangled\nheadphones, two heroes met...",
@@ -17,16 +19,16 @@ class IntroScene extends BaseScene {
     this.pageIndex = 0;
 
     this.add
-      .text(width / 2, 50, "~ THE LEGEND BEGINS ~", {
+      .text(width / 2, 50 * sy, "~ THE LEGEND BEGINS ~", {
         ...THEME.text.subtitle,
         color: THEME.colors.pink,
       })
       .setOrigin(0.5);
 
-    const boxX = 60;
-    const boxY = 130;
-    const boxW = width - 120;
-    const boxH = 280;
+    const boxX = 60 * sx;
+    const boxY = 130 * sy;
+    const boxW = width - 120 * sx;
+    const boxH = 280 * sy;
     const box = this.add.graphics();
     box.fillStyle(0x000000, 0.6);
     box.fillRect(boxX, boxY, boxW, boxH);
@@ -41,15 +43,15 @@ class IntroScene extends BaseScene {
     }).setOrigin(0.5);
 
     this.hint = this.add
-      .text(width / 2, boxY + boxH + 30, "[ click / SPACE for next ]", {
+      .text(width / 2, boxY + boxH + 30 * sy, "[ click / SPACE for next ]", {
         ...THEME.text.tiny,
         color: THEME.colors.gray,
       })
       .setOrigin(0.5);
 
     this.skipBtn = this.addButton(
-      width - 80,
-      height - 30,
+      width - 80 * sx,
+      height - 30 * sy,
       "SKIP >>",
       () => this.goNext(),
       { ...THEME.text.buttonSm }

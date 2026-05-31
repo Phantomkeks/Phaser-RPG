@@ -6,6 +6,9 @@ class FinaleScene extends BaseScene {
 
   create() {
     const { width, height } = this.scale;
+    const sx = width / 800;
+    const sy = height / 600;
+    const s = Math.min(sx, sy);
     this.cameras.main.setBackgroundColor("#1a0a2e");
 
     this.heartTimer = this.time.addEvent({
@@ -16,7 +19,7 @@ class FinaleScene extends BaseScene {
     this.events.once("shutdown", () => this.heartTimer && this.heartTimer.remove());
 
     this.add
-      .text(width / 2, 50, "♥ CONGRATULATIONS! ♥", {
+      .text(width / 2, 50 * sy, "♥ CONGRATULATIONS! ♥", {
         ...THEME.text.title,
         fontSize: "20px",
         strokeThickness: 3,
@@ -24,17 +27,17 @@ class FinaleScene extends BaseScene {
       .setOrigin(0.5);
 
     this.add
-      .text(width / 2, 90, "You completed every quest together.", {
+      .text(width / 2, 90 * sy, "You completed every quest together.", {
         ...THEME.text.body,
         color: THEME.colors.gold,
       })
       .setOrigin(0.5);
 
-    this.add.image(60, 60, GameState.avatars.bride || "bride_default").setScale(3);
-    this.add.image(width - 60, 60, GameState.avatars.groom || "groom_default").setScale(3);
-    this.add.text(width / 2, 115, "Messages from those who love you:", THEME.text.small).setOrigin(0.5);
+    this.add.image(60 * sx, 60 * sy, GameState.avatars.bride || "bride_default").setScale(3 * s);
+    this.add.image(width - 60 * sx, 60 * sy, GameState.avatars.groom || "groom_default").setScale(3 * s);
+    this.add.text(width / 2, 115 * sy, "Messages from those who love you:", THEME.text.small).setOrigin(0.5);
 
-    this.msgTopStart = 160;
+    this.msgTopStart = 160 * sy;
     this.msgY = this.msgTopStart;
     this.messageTexts = [];
 
@@ -52,10 +55,10 @@ class FinaleScene extends BaseScene {
         .setAlpha(0);
 
       const bodyText = this.add
-        .text(x, y + 22, m.text, {
+        .text(x, y + 22 * sy, m.text, {
           ...THEME.text.small,
           align: "center",
-          wordWrap: { width: this.scale.width - 100 },
+          wordWrap: { width: this.scale.width - 100 * sx },
           lineSpacing: 4,
         })
         .setOrigin(0.5, 0)
@@ -63,11 +66,11 @@ class FinaleScene extends BaseScene {
 
       this.tweens.add({ targets: [fromText, bodyText], alpha: 1, duration: 600 });
       this.messageTexts.push(fromText, bodyText);
-      this.msgY += 30 + bodyText.height + 15;
+      this.msgY += 30 * sy + bodyText.height + 15 * sy;
     }
 
     this.hint = this.add
-      .text(width / 2, height - 25, "♥ THE END ♥ — Live happily ever after.", { ...THEME.text.tiny })
+      .text(width / 2, height - 25 * sy, "♥ THE END ♥ — Live happily ever after.", { ...THEME.text.tiny })
       .setOrigin(0.5);
     this.hint.setColor(THEME.colors.pink);
   }

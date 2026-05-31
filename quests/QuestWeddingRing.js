@@ -7,21 +7,24 @@ class QuestWeddingRing extends BaseScene {
 
   create() {
     const { width, height } = this.scale;
+    const sx = width / 800;
+    const sy = height / 600;
+    const s = Math.min(sx, sy);
     this.cameras.main.setBackgroundColor("#1d3557");
     this.enableEscToOverworld();
 
     this.addQuestTitle("QUEST 3: FIND THE RING", THEME.colors.gold);
-    this.addSubtitle("Click around. Things will feel warmer as you get close.", 60);
+    this.addSubtitle("Click around. Things will feel warmer as you get close.", 60 * sy);
 
     this.makeTextures();
 
     const decoyKinds = ["book", "pillow", "shoe", "plant", "mug", "sock"];
     const positions = this.scatterPositions(15, {
-      xMin: 80,
-      xMax: width - 80,
-      yMin: 120,
-      yMax: height - 90,
-      minDist: 70,
+      xMin: 80 * sx,
+      xMax: width - 80 * sx,
+      yMin: 120 * sy,
+      yMax: height - 90 * sy,
+      minDist: 70 * s,
     });
 
     // Ring is hidden at one of the decoy positions (no separate sprite).
@@ -32,22 +35,23 @@ class QuestWeddingRing extends BaseScene {
     this.clicks = 0;
 
     // Max sensible distance on the play field — used to normalize warmth.
-    this.maxDist = Phaser.Math.Distance.Between(0, 120, width, height);
+    this.maxDist = Phaser.Math.Distance.Between(0, 120 * sy, width, height);
 
     positions.forEach((pos) => {
       const key = Phaser.Utils.Array.GetRandom(decoyKinds);
-      const obj = this.add.image(pos.x, pos.y, key).setScale(4).setInteractive({ useHandCursor: true });
+      const obj = this.add.image(pos.x, pos.y, key).setScale(4 * s).setInteractive({ useHandCursor: true });
       obj.on("pointerdown", () => this.inspect(obj, pos));
     });
 
     this.statusText = this.add
-      .text(width / 2, height - 60, "Tap things to inspect them...", {
+      .text(width / 2, height - 60 * sy, "Tap things to inspect them...", {
         ...THEME.text.body,
         color: THEME.colors.gold,
       })
       .setOrigin(0.5);
 
-    this.clickText = this.add.text(20, 20, "CLICKS: 0", THEME.text.hud);
+    this.clickText = this.add.text(20 * sx, 20 * sy, "CLICKS: 0", THEME.text.hud);
+    this._scale = s;
 
     // Idle nudge: if the player hasn't clicked anything for 8s, show a small hint.
     this.idleNudge = this.time.delayedCall(8000, () => {
@@ -79,7 +83,7 @@ class QuestWeddingRing extends BaseScene {
     obj.disableInteractive();
     this.tweens.add({
       targets: obj,
-      scale: 4.6,
+      scale: 4.6 * (this._scale || 1),
       duration: 80,
       yoyo: true,
       onComplete: () => obj.setAlpha(0.6),

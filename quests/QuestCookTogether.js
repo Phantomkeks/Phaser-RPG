@@ -6,11 +6,14 @@ class QuestCookTogether extends BaseScene {
 
   create() {
     const { width, height } = this.scale;
+    const sx = width / 800;
+    const sy = height / 600;
+    const s = Math.min(sx, sy);
     this.cameras.main.setBackgroundColor("#3a2618");
     this.enableEscToOverworld();
 
     this.addQuestTitle("QUEST 4: COOK TOGETHER", THEME.colors.mint);
-    this.addSubtitle("Click ingredients in the right order!", 60);
+    this.addSubtitle("Click ingredients in the right order!", 60 * sy);
 
     this.makeTextures();
 
@@ -20,7 +23,7 @@ class QuestCookTogether extends BaseScene {
     this.recipeLabels = {};
     this.recipe.forEach((ing, i) => {
       const label = this.add
-        .text(width / 2, 100 + i * 22, `${i + 1}. ${ing.toUpperCase()}`, {
+        .text(width / 2, (100 + i * 22) * sy, `${i + 1}. ${ing.toUpperCase()}`, {
           ...THEME.text.body,
           fontSize: "11px",
         })
@@ -31,19 +34,20 @@ class QuestCookTogether extends BaseScene {
 
     const pot = this.add.graphics();
     pot.fillStyle(0x4a4e69, 1);
-    pot.fillRoundedRect(width / 2 - 60, height - 200, 120, 60, 8);
-    this.add.text(width / 2, height - 170, "POT", THEME.text.body).setOrigin(0.5);
+    pot.fillRoundedRect(width / 2 - 60 * sx, height - 200 * sy, 120 * sx, 60 * sy, 8);
+    this.add.text(width / 2, height - 170 * sy, "POT", THEME.text.body).setOrigin(0.5);
+    this._potY = height - 170 * sy;
 
     const layout = Phaser.Utils.Array.Shuffle([...this.recipe]);
     layout.forEach((ing, i) => {
-      const x = 100 + i * 130;
-      const y = height - 80;
-      const sprite = this.add.image(x, y, ing).setScale(4).setInteractive({ useHandCursor: true });
+      const x = (100 + i * 130) * sx;
+      const y = height - 80 * sy;
+      const sprite = this.add.image(x, y, ing).setScale(4 * s).setInteractive({ useHandCursor: true });
       sprite.on("pointerdown", () => this.pickIngredient(ing, sprite));
     });
 
     this.feedback = this.add
-      .text(width / 2, height - 30, "", {
+      .text(width / 2, height - 30 * sy, "", {
         ...THEME.text.body,
         color: THEME.colors.gold,
       })
@@ -58,7 +62,7 @@ class QuestCookTogether extends BaseScene {
       label.setText("✓ " + label._baseText);
       this.tweens.add({
         targets: sprite,
-        y: this.scale.height - 170,
+        y: this._potY,
         x: this.scale.width / 2,
         duration: 400,
         ease: "Cubic.easeIn",
