@@ -5,13 +5,6 @@ const config = {
   height: 600,
   pixelArt: true,
   backgroundColor: "#1a1a2e",
-  scale: {
-    mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_BOTH,
-  },
-  input: {
-    activePointers: 3,
-  },
   physics: {
     default: "arcade",
     arcade: { gravity: { y: 0 }, debug: false },
