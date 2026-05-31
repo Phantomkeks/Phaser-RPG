@@ -84,6 +84,11 @@ Then open <http://localhost:8000>.
 - Vanilla JavaScript, no build step
 - "Press Start 2P" font via Google Fonts for the retro look
 
+## Supported Devices
+
+- Tested on Safari and Chrome
+- Works on desktop (recommended with keyboard) and mobile (D-pad is rendered as overlay)
+
 ## License
 
 MIT — see [LICENSE](./LICENSE).
