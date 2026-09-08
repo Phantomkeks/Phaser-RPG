@@ -1,18 +1,13 @@
-// Each entry: { from: "Name", text: "Message", color: "#hex" (optional) }
 const FRIENDS_MESSAGES = [
   {
-    from: "Mom & Dad",
-    text: "From your first steps to this big leap — we couldn't be prouder. Wishing you a lifetime of love and laughter.",
+    from: "Emu, Hanni, Katha, Lukki",
+    text: "Für eure gemeinsame Ehe-Quest wünschen wir euch von Herzen alles, was wirklich zählt: tiefes Vertrauen, ein Zuhause voller Geborgenheit und diese bedingungslose Liebe.
+ 
+Weil die Ehe aber mindestens so viel Spaß machen soll wie unsere gemeinsamen Abende, wünschen wir euch dazu das ultimative Würfelglück! Möget ihr im Alltag immer die besten Zahlen werfen – sei es beim Verhandeln, wer den Müll rausbringt, oder wenn das Leben mal eine spontane Hürde aufstellt. 
+ 
+Damit euch der Nachschub dafür nie ausgeht, gilt für euer Zuhause die goldene Regel: Hört erst auf einzurichten, wenn mindestens ein Schrank randvoll mit Spielen steht! 
+ 
+Wir freuen uns riesig auf alles, was kommt – Auf euch und euer perfektes Match!",
     color: "#ffd166",
-  },
-  {
-    from: "Anna & Tom",
-    text: "Watching you two together is like watching a perfect duet. Here's to your happily ever after!",
-    color: "#06d6a0",
-  },
-  {
-    from: "The Office Crew",
-    text: "We promise to keep the coffee cups coming. Congratulations on the upgrade from coworkers to lifelong partners!",
-    color: "#118ab2",
-  },
+  }
 ];
